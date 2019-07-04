@@ -1,2 +1,4 @@
 def to_lower(text):
-    return text.lower()
+    if text and text != "":
+        return text.lower()
+    return text

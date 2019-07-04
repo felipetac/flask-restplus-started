@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from flask_babel import Babel
 from config import CONFIG
-from app.mod_auth.api import BLUEPRINT as API
+
 
 # Define the WSGI application object
 APP = Flask(__name__)
@@ -33,4 +33,9 @@ def not_found(error):
     return jsonify({"result": ret}), 404
 
 # Register blueprint(s)
+from app.mod_auth.api import BLUEPRINT as API # pylint: disable=wrong-import-position
 APP.register_blueprint(API, url_prefix='/api/1')
+
+# Build the database:
+# This will create the database file using SQLAlchemy
+DB.create_all()

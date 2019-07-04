@@ -5,6 +5,7 @@ verify_ssl = true
 
 [dev-packages]
 pylint = "*"
+python-dotenv = "*"
 
 [packages]
 flask-restplus = "*"
@@ -12,11 +13,16 @@ flask-script = "*"
 flask-migrate = "*"
 flask-marshmallow = "*"
 flask-babel = "*"
-sqlalchemy-utils = "*"
-marshmallow-sqlalchemy = "*"
 flask-wtf = "*"
+sqlalchemy-utils = "*"
+marshmallow = ">3.0.0rc4"
+marshmallow-sqlalchemy = "*"
 wtforms-alchemy = "*"
 wtforms-json = "*"
+passlib = "*"
 
 [requires]
 python_version = "3.7"
+
+[pipenv]
+allow_prereleases = true

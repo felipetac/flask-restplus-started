@@ -1,4 +1,3 @@
-# Import Form
 from flask_wtf import FlaskForm
 from wtforms_alchemy import model_form_factory
 import wtforms_json
