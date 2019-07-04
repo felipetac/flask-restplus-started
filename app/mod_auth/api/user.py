@@ -31,7 +31,7 @@ class User(Resource):
             NS.abort(400, "Formulário inválido", status=res["form"], statusCode="400")
         return res, 201
 
-@NS.route('/<int:id>')
+@NS.route('/<int:_id>')
 @NS.response(404, 'Usuário não encontrado')
 @NS.param('id', 'Identificador do usuário')
 class UserItem(Resource):
@@ -39,31 +39,31 @@ class UserItem(Resource):
     @NS.doc('get_user')
     #@NS.marshal_with(_USER)
     @NS.response(200, 'Usuário apresentado', _USER)
-    def get(self, id): # pylint: disable=redefined-builtin
+    def get(self, _id):
         '''Exibe um usuário dado seu identificador'''
-        res = UserService.read(id)
+        res = UserService.read(_id)
         if not res:
-            NS.abort(400, "Usuário não encontrado", status={"id": id}, statusCode="404")
+            NS.abort(400, "Usuário não encontrado", status={"id": _id}, statusCode="404")
         return res
 
     @NS.doc('delete_user')
     @NS.response(204, 'Usuário apagado')
-    def delete(self, id): # pylint: disable=redefined-builtin
+    def delete(self, _id):
         '''Apaga um usuário dado seu identificador'''
-        res = UserService.delete(id)
+        res = UserService.delete(_id)
         if not res:
-            NS.abort(400, "Usuário não encontrado", status={"id": id}, statusCode="404")
+            NS.abort(400, "Usuário não encontrado", status={"id": _id}, statusCode="404")
         return "Usuário apagado com sucesso!", 204
 
     @NS.doc('update_user')
     @NS.expect(_USER)
     @NS.response(200, 'Usuário atualizado', _USER)
     #@NS.marshal_with(_USER, code=200)
-    def put(self, id): # pylint: disable=redefined-builtin
+    def put(self, _id):
         '''Atualiza um usuário dado seu identificador'''
-        res = UserService.update(id, request.get_json())
+        res = UserService.update(_id, request.get_json())
         if not res:
-            NS.abort(400, "Usuário não encontrado", status={"id": id}, statusCode="404")
+            NS.abort(400, "Usuário não encontrado", status={"id": _id}, statusCode="404")
         return res
 
 @NS.route('/page/<int:page>')
