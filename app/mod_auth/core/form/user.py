@@ -7,4 +7,4 @@ class UserForm(RestForm):
 
     class Meta:
         model = User
-        field_args = {'email': {'filters': [lambda x: x, to_lower]}}
+        field_args = {'email': {'filters': [to_lower]}}
