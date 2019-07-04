@@ -12,7 +12,7 @@ def paginate(model):
                 last_p = int(count / per_page)
                 nxt = (page + 1) if page < last_p else None
                 last_p = last_p if last_p > 0 else 1
-                page = {"prev": prev, "next": nxt, "last": last_p}
+                page = {"curr": page, "prev": prev, "next": nxt, "last": last_p}
                 return {"data": data, "page": page}
             return data
         return wrapper

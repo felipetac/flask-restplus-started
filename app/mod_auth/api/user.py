@@ -1,8 +1,8 @@
 from flask import request
 from flask_restplus import Resource, fields
-from app.mod_auth.api import API
+from . import API
 from app.mod_auth.core.service.user import User as UserService
-
+from . import marshal_paginate
 
 NS = API.namespace('users', description='Operações da entidade Usuário')
 
@@ -71,11 +71,12 @@ class UserPaginate(Resource):
     '''Lista os usuários com paginação'''
     @NS.doc('list_users')
     #@NS.marshal_list_with(_USER)
+    @marshal_paginate
     def get(self, page):
         '''Lista os usuários com paginação'''
         res = request.get_json()
         per_page = PER_PAGE
-        if "per_page" in res:
+        if res and "per_page" in res:
             per_p = res.per_page.data
             if per_p < PER_PAGE:
                 per_page = per_p
