@@ -1,17 +1,25 @@
 from app import DB
 from app.mod_user.model import User as UserModel, UserSchema
 from app.mod_user.form import User as UserForm
-from app.mod_common.util import paginate
+from app.mod_common.util import paginate, get_attributes_class
 
 class User():
 
     @classmethod
     @paginate(UserModel)
-    def list(cls, page, per_page):
+    def list(cls, page, per_page, order_by, sort):
         if page and isinstance(page, int) and \
         per_page and isinstance(per_page, int):
-            users = UserModel.query.order_by(UserModel.date_modified.desc())\
-                                       .paginate(page, per_page, error_out=False).items
+            if not order_by or order_by not in get_attributes_class(UserModel):
+                order_by = UserModel.id
+            else:
+                order_by = getattr(UserModel, order_by)
+            if sort and sort in ["asc", "desc"]:
+                order_by = getattr(order_by, sort)
+            else:
+                order_by = order_by.desc
+            users = UserModel.query.order_by(order_by()) \
+                                   .paginate(page, per_page, error_out=False).items
             if users:
                 user_schema = UserSchema(many=True)
                 return user_schema.dump(users)

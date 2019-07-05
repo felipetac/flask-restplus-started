@@ -64,18 +64,24 @@ class UserItem(Resource):
             NS.abort(400, "Usuário não encontrado", status={"id": _id}, statusCode="404")
         return res
 
-@NS.route('/page/<int:page>')
+@NS.route('/page/<int:page>',
+          '/limit/<int:per_page>/page/<int:page>',
+          '/order-by/<string:order_by>/limit/<int:per_page>/page/<int:page>',
+          '/order-by/<string:order_by>/<string:sort>/limit/<int:per_page>/page/<int:page>')
 @NS.response(200, 'Usuário listado')
 @NS.response(400, 'Formulário inválido')
 @NS.param('page', 'Numero da página')
+@NS.param('per_page', 'Quantidade de usuários por página')
+@NS.param('order_by', 'Atributo de ordenação')
+@NS.param('sort', 'Tipo da ordenação')
 class UserPaginate(Resource):
     '''Lista os usuários com paginação'''
     @NS.doc('list_users')
     #@NS.marshal_list_with(_USER)
     @marshal_paginate
-    def get(self, page):
+    def get(self, page, per_page=PER_PAGE, order_by=None, sort="desc"):
         '''Lista os usuários com paginação'''
-        res = UserService.list(page, PER_PAGE)
+        res = UserService.list(page, per_page, order_by, sort)
         if isinstance(res, dict) and "form" in res.keys():
             NS.abort(400, "Formulário inválido", status=res["form"], statusCode="400")
         return res

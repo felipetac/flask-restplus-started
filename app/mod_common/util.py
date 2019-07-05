@@ -9,14 +9,12 @@ def paginate(model):
         def wrapper(*args, **kwargs):
             page = 1
             per_page = PER_PAGE
-            print(args)
-            if len(args) == 3:
-                _cls, apg, appg = args
+            if len(args) > 3:
+                _cls, apg, appg, _ord_by, _sort = args
                 if apg and isinstance(apg, int):
                     page = apg
-                if appg and isinstance(appg, dict) and \
-                    "per_page" in appg.keys() and appg["per_page"]:
-                    per_page = int(appg["per_page"])
+                if appg and isinstance(appg, int):
+                    per_page = appg
             data = function(*args, **kwargs)
             if data:
                 count = DB.session.query(model.id).count()
@@ -43,11 +41,5 @@ def marshal_paginate(function):
         return data
     return wrapper
 
-# workaround para requisições com payload opcional
-def __optional_request(req):
-    try:
-        return req.get_json()
-    except Exception: # pylint: disable=broad-except
-        return {}
-
-PAYLOAD_OPTIONAL = __optional_request
+def get_attributes_class(cls):
+    return [i for i in dir(cls) if not callable(i)]

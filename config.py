@@ -43,7 +43,7 @@ class Config(object):
     PASSWORD_SCHEMES = ['pbkdf2_sha512']
 
     # Quantidade de itens na paginação
-    PER_PAGE = 10
+    PER_PAGE = 50
 
 class DevelopmentConfig(Config):
     DEVELOPMENT = True
