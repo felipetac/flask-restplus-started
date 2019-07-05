@@ -1,4 +1,4 @@
-from app import DB
+from app import DB, PP as PER_PAGE
 from app.mod_user.model import User as UserModel, UserSchema
 from app.mod_user.form import User as UserForm
 from app.mod_common.util import paginate, get_attributes_class
@@ -7,7 +7,7 @@ class User():
 
     @classmethod
     @paginate(UserModel)
-    def list(cls, page, per_page, order_by, sort):
+    def list(cls, page=1, per_page=PER_PAGE, order_by="id", sort="desc"):
         if page and isinstance(page, int) and \
         per_page and isinstance(per_page, int):
             if not order_by or order_by not in get_attributes_class(UserModel):

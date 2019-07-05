@@ -69,7 +69,7 @@ class UserItem(Resource):
           '/order-by/<string:order_by>/limit/<int:per_page>/page/<int:page>',
           '/order-by/<string:order_by>/<string:sort>/limit/<int:per_page>/page/<int:page>')
 @NS.response(200, 'Usuário listado')
-@NS.response(400, 'Formulário inválido')
+@NS.response(404, 'URL inválida')
 @NS.param('page', 'Numero da página')
 @NS.param('per_page', 'Quantidade de usuários por página')
 @NS.param('order_by', 'Atributo de ordenação')
@@ -83,5 +83,5 @@ class UserPaginate(Resource):
         '''Lista os usuários com paginação'''
         res = UserService.list(page, per_page, order_by, sort)
         if isinstance(res, dict) and "form" in res.keys():
-            NS.abort(400, "Formulário inválido", status=res["form"], statusCode="400")
+            NS.abort(404, "URL inválida", status=res["form"], statusCode="400")
         return res
