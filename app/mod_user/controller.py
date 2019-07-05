@@ -1,8 +1,9 @@
 from flask import request
 from flask_restplus import Resource, fields
 from app.mod_user.service import User as UserService
-from app.mod_common.util import marshal_paginate #, inspect
+from app.mod_common.util import marshal_paginate, PAYLOAD_OPTIONAL
 from . import API
+
 
 NS = API.namespace('users', description='Operações da entidade Usuário')
 
@@ -13,20 +14,17 @@ _USER = API.model('User', {
     'password': fields.String(required=True, description='Senha do usuário')
 })
 
-PER_PAGE = 50
-
 @NS.route('/')
 class User(Resource):
     '''Cria um novo usuario'''
     @NS.doc('create_user')
     @NS.expect(_USER)
     @NS.response(201, 'Usuário criado', _USER)
-    @NS.response(404, 'Formulário inválido')
+    @NS.response(400, 'Formulário inválido')
     #@NS.marshal_with(_USER, code=201)
     def post(self):
         '''Cria um novo usuário'''
-        res = UserService.create(request.get_json())
-        print(res)
+        res = UserService.create(API.payload)
         if "form" in res.keys():
             NS.abort(400, "Formulário inválido", status=res["form"], statusCode="400")
         return res, 201
@@ -61,12 +59,17 @@ class UserItem(Resource):
     #@NS.marshal_with(_USER, code=200)
     def put(self, _id):
         '''Atualiza um usuário dado seu identificador'''
-        res = UserService.update(_id, request.get_json())
+        res = UserService.update(_id, API.payload)
         if not res:
             NS.abort(400, "Usuário não encontrado", status={"id": _id}, statusCode="404")
         return res
 
 @NS.route('/page/<int:page>')
+@NS.response(200, 'Usuário listado')
+@NS.response(400, 'Formulário inválido')
+@NS.param('page', 'Numero da página')
+@NS.param('per_page', 'Quantidade de Itens por página', 
+          type="integer", _in="body", required=False, example=10)
 class UserPaginate(Resource):
     '''Lista os usuários com paginação'''
     @NS.doc('list_users')
@@ -74,10 +77,8 @@ class UserPaginate(Resource):
     @marshal_paginate
     def get(self, page):
         '''Lista os usuários com paginação'''
-        res = request.get_json()
-        per_page = PER_PAGE
-        if res and "per_page" in res:
-            per_p = res.per_page.data
-            if per_p < PER_PAGE:
-                per_page = per_p
-        return UserService.list(page, per_page)
+        json_body = PAYLOAD_OPTIONAL(request)
+        res = UserService.list(page, json_body)
+        if isinstance(res, dict) and "form" in res.keys():
+            NS.abort(400, "Formulário inválido", status=res["form"], statusCode="400")
+        return res

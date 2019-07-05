@@ -36,9 +36,14 @@ class Config(object):
     # JWT Algorithm
     JWT_ALGORITHM = 'HS512'
 
+    # Definição da linguagem padrão
     BABEL_DEFAULT_LOCALE = 'pt'
 
+    # Tipo de Algoritmo para encriptação da senha
     PASSWORD_SCHEMES = ['pbkdf2_sha512']
+
+    # Quantidade de itens na paginação
+    PER_PAGE = 50
 
 class DevelopmentConfig(Config):
     DEVELOPMENT = True

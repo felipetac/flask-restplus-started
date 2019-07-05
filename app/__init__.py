@@ -14,7 +14,10 @@ __ENV = os.environ["APP_SETTINGS"] if "APP_SETTINGS" in os.environ.keys() else "
 APP.config.from_object(CONFIG.get(__ENV))
 
 with APP.app_context():
+    # Chamando da configuração o esquema da senha
     PS = current_app.config['PASSWORD_SCHEMES'] or ['pbkdf2_sha512']
+    # Chamando da configuração qtd. itens por pagina
+    PP = current_app.config['PER_PAGE'] or 50
 
 # Define the database object which is imported
 # by modules and controllers

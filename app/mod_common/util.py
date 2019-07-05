@@ -25,9 +25,20 @@ def marshal_paginate(function):
     @wraps(function)
     def wrapper(*args, **kwargs):
         data = function(*args, **kwargs)
-        if "page" in data.keys():
+        if isinstance(data, tuple):
+            data = data[0]
+        if isinstance(data, dict) and "page" in data.keys():
             for k in ["curr", "prev", "next", "last"]:
                 if k in data["page"].keys() and data["page"][k]:
                     data["page"][k] = parse.urljoin(request.base_url, str(data["page"][k]))
         return data
     return wrapper
+
+# workaround para requisições com payload opcional
+def __optional_request(req):
+    try:
+        return req.get_json()
+    except Exception: # pylint: disable=broad-except
+        return {}
+
+PAYLOAD_OPTIONAL = __optional_request
