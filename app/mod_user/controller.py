@@ -1,8 +1,8 @@
 from flask import request
 from flask_restplus import Resource, fields
-from app.mod_auth.core.service.user import User as UserService
+from app.mod_user.service import User as UserService
+from app.mod_common.util import marshal_paginate #, inspect
 from . import API
-from . import marshal_paginate #, inspect
 
 NS = API.namespace('users', description='Operações da entidade Usuário')
 

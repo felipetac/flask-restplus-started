@@ -1,6 +1,5 @@
 from app import DB
 
-
 class Base(DB.Model):
 
     __abstract__ = True

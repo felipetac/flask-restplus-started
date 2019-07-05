@@ -2,7 +2,7 @@
 from sqlalchemy_utils import PasswordType, EmailType
 
 from app import DB, MA, PS
-from . import Base
+from app.mod_common.model import Base
 
 class User(Base):
 

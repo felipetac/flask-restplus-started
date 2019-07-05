@@ -2,7 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms_alchemy import model_form_factory
 import wtforms_json
 from app import DB
-from app.mod_auth.core.validator import Unique, Email
+from app.mod_common.validator import Unique, Email
 
 wtforms_json.init()
 
