@@ -1,7 +1,7 @@
-from flask import request
 from flask_restplus import Resource, fields
 from app.mod_user.service import User as UserService
-from app.mod_common.util import marshal_paginate, PAYLOAD_OPTIONAL
+from app.mod_common.util import marshal_paginate
+from app import PP as PER_PAGE
 from . import API
 
 
@@ -68,8 +68,6 @@ class UserItem(Resource):
 @NS.response(200, 'Usuário listado')
 @NS.response(400, 'Formulário inválido')
 @NS.param('page', 'Numero da página')
-@NS.param('per_page', 'Quantidade de Itens por página', 
-          type="integer", _in="body", required=False, example=10)
 class UserPaginate(Resource):
     '''Lista os usuários com paginação'''
     @NS.doc('list_users')
@@ -77,8 +75,7 @@ class UserPaginate(Resource):
     @marshal_paginate
     def get(self, page):
         '''Lista os usuários com paginação'''
-        json_body = PAYLOAD_OPTIONAL(request)
-        res = UserService.list(page, json_body)
+        res = UserService.list(page, PER_PAGE)
         if isinstance(res, dict) and "form" in res.keys():
             NS.abort(400, "Formulário inválido", status=res["form"], statusCode="400")
         return res

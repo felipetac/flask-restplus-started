@@ -8,18 +8,15 @@ class User():
 
     @classmethod
     @paginate(UserModel)
-    def list(cls, page, json_obj):
-        if page and isinstance(page, int):
-            form = PageForm.from_json(json_obj)
-            if form.validate(): #não utilizei o 'validate_on_form' pq ele não func. em GET
-                per_page = form.per_page.data
-                users = UserModel.query.order_by(UserModel.date_modified.desc())\
-                                        .paginate(page, per_page, error_out=False).items
-                if users:
-                    user_schema = UserSchema(many=True)
-                    return user_schema.dump(users)
-                return []
-            return {"form": form.errors}
+    def list(cls, page, per_page):
+        if page and isinstance(page, int) and \
+        per_page and isinstance(per_page, int):
+            users = UserModel.query.order_by(UserModel.date_modified.desc())\
+                                       .paginate(page, per_page, error_out=False).items
+            if users:
+                user_schema = UserSchema(many=True)
+                return user_schema.dump(users)
+            return []
         return None
 
     @staticmethod

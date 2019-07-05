@@ -1,18 +1,27 @@
 from urllib import parse
 from functools import wraps
+import math
 from flask import request
-from app import DB
+from app import DB, PP as PER_PAGE
 
 def paginate(model):
     def decorator(function):
         def wrapper(*args, **kwargs):
-            page = kwargs["page"] if "page" in kwargs.keys() else 1
-            per_page = kwargs["per_page"] if "per_page" in kwargs.keys() else 50
+            page = 1
+            per_page = PER_PAGE
+            print(args)
+            if len(args) == 3:
+                _cls, apg, appg = args
+                if apg and isinstance(apg, int):
+                    page = apg
+                if appg and isinstance(appg, dict) and \
+                    "per_page" in appg.keys() and appg["per_page"]:
+                    per_page = int(appg["per_page"])
             data = function(*args, **kwargs)
             if data:
                 count = DB.session.query(model.id).count()
                 prev = (page - 1) if page > 1 else None
-                last_p = int(count / per_page)
+                last_p = math.ceil(count / per_page)
                 nxt = (page + 1) if page < last_p else None
                 last_p = last_p if last_p > 0 else 1
                 page = {"curr": page, "prev": prev, "next": nxt, "last": last_p}
