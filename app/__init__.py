@@ -33,7 +33,7 @@ def not_found(error):
     return jsonify({"result": ret}), 404
 
 # Register blueprint(s)
-from app.mod_auth.api import BLUEPRINT as API # pylint: disable=wrong-import-position
+from app.mod_user import BLUEPRINT as API # pylint: disable=wrong-import-position
 APP.register_blueprint(API, url_prefix='/api/1')
 
 # Build the database:
