@@ -1,8 +1,6 @@
 from urllib import parse
 from functools import wraps
-import math
 from flask import request
-from app import DB, PP as PER_PAGE
 
 def marshal_paginate(function):
     @wraps(function)
