@@ -4,30 +4,6 @@ import math
 from flask import request
 from app import DB, PP as PER_PAGE
 
-def paginate(model):
-    def decorator(function):
-        def wrapper(*args, **kwargs):
-            page = 1
-            per_page = PER_PAGE
-            if len(args) > 3:
-                _cls, apg, appg, _ord_by, _sort = args
-                if apg and isinstance(apg, int):
-                    page = apg
-                if appg and isinstance(appg, int):
-                    per_page = appg
-            data = function(*args, **kwargs)
-            if data:
-                count = DB.session.query(model.id).count()
-                prev = (page - 1) if page > 1 else None
-                last_p = math.ceil(count / per_page)
-                nxt = (page + 1) if page < last_p else None
-                last_p = last_p if last_p > 0 else 1
-                page = {"curr": page, "prev": prev, "next": nxt, "last": last_p}
-                return {"data": data, "page": page}
-            return data
-        return wrapper
-    return decorator
-
 def marshal_paginate(function):
     @wraps(function)
     def wrapper(*args, **kwargs):
