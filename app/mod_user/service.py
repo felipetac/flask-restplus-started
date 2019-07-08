@@ -25,9 +25,9 @@ class User(Base):
         return {"form": form.errors}
 
     @classmethod
-    def update(cls, user_id, json_obj):
-        if user_id and isinstance(user_id, int):
-            user = cls.read(user_id, serializer=False)
+    def update(cls, entity_id, json_obj):
+        if entity_id and isinstance(entity_id, int):
+            user = cls.read(entity_id, serializer=False)
             if user:
                 form = UserForm.from_json(json_obj, obj=user) # obj to raising a ValidationError
                 if form.validate_on_submit():

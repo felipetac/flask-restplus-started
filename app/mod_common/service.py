@@ -26,9 +26,10 @@ class Base(ABC):
         form = ListForm.from_json(obj)
         form.order_by.choices = [(i, i) for i in get_attributes_class(cls.Meta.model)]
         if form.validate():
-            page, per_page = form.page.data, form.per_page.data
-            order_by = getattr(cls.Meta.model, form.order_by.data)
-            orderby_and_sort = getattr(order_by, form.sort.data)
+            page, per_page, order_by, sort = form.page.data, form.per_page.data, \
+                                             form.order_by.data, form.sort.data
+            order_by = getattr(cls.Meta.model, order_by)
+            orderby_and_sort = getattr(order_by, sort)
             entities = cls.Meta.model.query \
                                   .order_by(orderby_and_sort()) \
                                   .paginate(page, per_page, error_out=False).items
