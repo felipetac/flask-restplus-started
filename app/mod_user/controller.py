@@ -1,7 +1,6 @@
 from flask_restplus import Resource, fields
 from app.mod_user.service import User as UserService
 from app.mod_common.util import marshal_paginate
-from app import PP as PER_PAGE
 from . import API
 
 
@@ -79,7 +78,7 @@ class UserPaginate(Resource):
     @NS.doc('list_users')
     #@NS.marshal_list_with(_USER)
     @marshal_paginate
-    def get(self, page, per_page=PER_PAGE, order_by=None, sort="desc"):
+    def get(self, page, per_page=None, order_by=None, sort=None):
         '''Lista os usuários com paginação'''
         res = UserService.list(page, per_page, order_by, sort)
         if isinstance(res, dict) and "form" in res.keys():

@@ -16,4 +16,5 @@ def marshal_paginate(function):
     return wrapper
 
 def get_attributes_class(cls):
-    return [i for i in dir(cls) if not callable(i)]
+    return [i for i in dir(cls) if not callable(i) and not i.startswith('_') and  \
+            i not in ["metadata", "query", "query_class"]]

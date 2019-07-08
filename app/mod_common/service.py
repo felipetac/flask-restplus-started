@@ -1,14 +1,14 @@
 from abc import ABC, abstractstaticmethod, abstractclassmethod # Para implementar abstract class
 import math
-from app import DB, MA, PP as PER_PAGE
+from app import DB, MA
 from .util import get_attributes_class
 from .model import Base as BaseModel
-from .form import RestForm
+from .form import RestForm, ListForm
 
 class Base(ABC):
 
     @classmethod
-    def list(cls, page=1, per_page=PER_PAGE, order_by=None, sort=None):
+    def list(cls, page, per_page=None, order_by=None, sort=None):
         if not cls.Meta.model or not issubclass(cls.Meta.model, BaseModel):
             raise Exception("É necessário passar o atributo 'model'" +
                             "(Objeto SQLAlchemy) na classe inner Meta")
@@ -18,22 +18,19 @@ class Base(ABC):
         if not cls.Meta.form or not issubclass(cls.Meta.form, RestForm):
             raise Exception("É necessário passar o atributo 'form'" +
                             "(Objeto WTForm) na classe inner Meta")
-        if page and isinstance(page, int) and \
-        per_page and isinstance(per_page, int):
-            if not order_by or order_by not in get_attributes_class(cls.Meta.model):
-                if not "order_by" in get_attributes_class(cls.Meta) or not cls.Meta.order_by:
-                    order_by = getattr(cls.Meta.model, "id")
-                else:
-                    order_by = getattr(cls.Meta.model, cls.Meta.order_by)
-            else:
-                order_by = getattr(cls.Meta.model, order_by)
-            if not sort or sort not in ["asc", "desc"]:
-                if not cls.Meta.sort:
-                    raise Exception("Énecessário passar o atributo 'sort' \
-                                    ('asc' ou 'desc') na classe inner Meta")
-                orderby_and_sort = getattr(order_by, cls.Meta.sort)
-            else:
-                orderby_and_sort = getattr(order_by, sort)
+        obj = {}
+        obj["page"] = page
+        if per_page:
+            obj["per_page"] = per_page
+        if order_by:
+            obj["order_by"] = order_by
+        if sort:
+            obj["sort"] = sort
+        form = ListForm.from_json(obj)
+        form.order_by.choices = [(i, i) for i in get_attributes_class(cls.Meta.model)]
+        if form.validate():
+            order_by = getattr(cls.Meta.model, form.order_by.data)
+            orderby_and_sort = getattr(order_by, form.sort.data)
             entities = cls.Meta.model.query \
                                   .order_by(orderby_and_sort()) \
                                   .paginate(page, per_page, error_out=False).items
@@ -50,7 +47,7 @@ class Base(ABC):
                     return {"data": data, "page": page}
                 return data
             return []
-        return None
+        return {"form": form.errors}
 
     @classmethod
     def read(cls, entity_id, serializer=True):
@@ -89,6 +86,10 @@ class Base(ABC):
     @abstractclassmethod
     def update(cls, user_id, json_obj):
         pass
+
+    @classmethod
+    def get_meta(cls):
+        return cls.Meta
 
     class Meta:
         model = None
