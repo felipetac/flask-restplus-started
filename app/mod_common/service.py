@@ -84,12 +84,12 @@ class Base(ABC):
         pass
 
     @abstractclassmethod
-    def update(cls, user_id, json_obj):
+    def update(cls, entity_id, json_obj):
         pass
 
     class Meta:
         model = None
         schema = None
         form = None
-        order_by = "id"
+        order_by = None
         sort = "desc"
