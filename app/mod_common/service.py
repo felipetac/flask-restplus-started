@@ -8,7 +8,7 @@ from .form import RestForm, ListForm
 class Base(ABC):
 
     @classmethod
-    def list(cls, page, per_page=None, order_by=None, sort=None):
+    def list(cls, page=None, per_page=None, order_by=None, sort=None):
         if not cls.Meta.model or not issubclass(cls.Meta.model, BaseModel):
             raise Exception("É necessário passar o atributo 'model'" +
                             "(Objeto SQLAlchemy) na classe inner Meta")
@@ -26,6 +26,7 @@ class Base(ABC):
         form = ListForm.from_json(obj)
         form.order_by.choices = [(i, i) for i in get_attributes_class(cls.Meta.model)]
         if form.validate():
+            page, per_page = form.page.data, form.per_page.data
             order_by = getattr(cls.Meta.model, form.order_by.data)
             orderby_and_sort = getattr(order_by, form.sort.data)
             entities = cls.Meta.model.query \

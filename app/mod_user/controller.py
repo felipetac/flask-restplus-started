@@ -63,7 +63,8 @@ class UserItem(Resource):
             NS.abort(400, "Usuário não encontrado", status={"id": _id}, statusCode="404")
         return res
 
-@NS.route('/page/<int:page>',
+@NS.route('/',
+          '/page/<int:page>',
           '/limit/<int:per_page>/page/<int:page>',
           '/order-by/<string:order_by>/limit/<int:per_page>/page/<int:page>',
           '/order-by/<string:order_by>/<string:sort>/limit/<int:per_page>/page/<int:page>')
@@ -78,7 +79,7 @@ class UserPaginate(Resource):
     @NS.doc('list_users')
     #@NS.marshal_list_with(_USER)
     @marshal_paginate
-    def get(self, page, per_page=None, order_by=None, sort=None):
+    def get(self, page=None, per_page=None, order_by=None, sort=None):
         '''Lista os usuários com paginação'''
         res = UserService.list(page, per_page, order_by, sort)
         if isinstance(res, dict) and "form" in res.keys():
