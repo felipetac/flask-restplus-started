@@ -30,7 +30,7 @@ class User(Resource):
 
 @NS.route('/<int:_id>')
 @NS.response(404, 'Usuário não encontrado')
-@NS.param('id', 'Identificador do usuário')
+@NS.param('_id', 'Identificador do usuário')
 class UserItem(Resource):
     '''Exibe um usuário e permite a manipulação do mesmo'''
     @NS.doc('get_user')
