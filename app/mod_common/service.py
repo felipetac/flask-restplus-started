@@ -19,13 +19,10 @@ class Base(ABC):
             raise Exception("É necessário passar o atributo 'form'" +
                             "(Objeto WTForm) na classe inner Meta")
         obj = {}
-        obj["page"] = page
-        if per_page:
-            obj["per_page"] = per_page
-        if order_by:
-            obj["order_by"] = order_by
-        if sort:
-            obj["sort"] = sort
+        for attr in ["page", "per_page", "order_by", "sort"]:
+            _attr = eval(attr) # pylint: disable=eval-used
+            if _attr:
+                obj[attr] = _attr
         form = ListForm.from_json(obj)
         form.order_by.choices = [(i, i) for i in get_attributes_class(cls.Meta.model)]
         if form.validate():
