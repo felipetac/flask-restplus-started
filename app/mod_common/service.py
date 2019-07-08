@@ -87,10 +87,6 @@ class Base(ABC):
     def update(cls, user_id, json_obj):
         pass
 
-    @classmethod
-    def get_meta(cls):
-        return cls.Meta
-
     class Meta:
         model = None
         schema = None
