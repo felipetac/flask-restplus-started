@@ -24,5 +24,4 @@ class UserSchema(MA.ModelSchema):
         exclude = ("password", ) # Exclude password from serialization
 
     roles = fields.Nested(RoleSchema, many=True,
-                          exclude=("date_created",
-                                   "date_modified", ))
+                          only=("id", "role_name", ))

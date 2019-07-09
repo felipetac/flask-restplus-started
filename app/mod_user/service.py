@@ -40,12 +40,12 @@ class User(Base):
                 return {"form": form.errors}
         return None
 
-    @classmethod
-    def _populate_obj(cls, form, user):
+    @staticmethod
+    def _populate_obj(form, user):
         form.populate_obj(user)
         if form.roles_id.data:
             for role_id in form.roles_id.data:
                 if role_id not in [role.id for role in user.roles]:
-                    role = cls.read(role_id, serializer=False)
+                    role = RoleService.read(role_id, serializer=False)
                     user.roles.append(role)
         return user
