@@ -1,6 +1,7 @@
 from flask_restplus import Resource, fields
 from app.mod_user.service import User as UserService
 from app.mod_common.util import marshal_paginate
+from app.mod_role.util import register_roles
 from . import API
 
 
@@ -13,6 +14,7 @@ _USER = API.model('User', {
     'password': fields.String(required=True, description='Senha do usuário')
 })
 
+@register_roles()
 @NS.route('/')
 class User(Resource):
     '''Cria um novo usuario'''
@@ -28,6 +30,7 @@ class User(Resource):
             NS.abort(400, "Formulário inválido", status=res["form"], statusCode="400")
         return res, 201
 
+@register_roles()
 @NS.route('/<int:_id>')
 @NS.response(404, 'Usuário não encontrado')
 @NS.param('_id', 'Identificador do usuário')
@@ -63,6 +66,7 @@ class UserItem(Resource):
             NS.abort(400, "Usuário não encontrado", status={"id": _id}, statusCode="404")
         return res
 
+@register_roles()
 @NS.route('/',
           '/page/<int:page>',
           '/limit/<int:per_page>/page/<int:page>',

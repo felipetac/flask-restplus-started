@@ -17,7 +17,7 @@ with APP.app_context():
     # Chamando da configuração o esquema da senha
     PS = current_app.config['PASSWORD_SCHEMES'] or ['pbkdf2_sha512']
     # Chamando da configuração qtd. itens por pagina
-    PP = current_app.config['PER_PAGE'] or 50
+    PP = current_app.config['PER_PAGE'] or 100
 
 # Define the database object which is imported
 # by modules and controllers
@@ -42,3 +42,7 @@ APP.register_blueprint(API, url_prefix='/api/1')
 # Build the database:
 # This will create the database file using SQLAlchemy
 DB.create_all()
+
+from app.mod_role.util import create_all_roles # pylint: disable=wrong-import-position
+with APP.app_context():
+    create_all_roles()
