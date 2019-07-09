@@ -2,8 +2,7 @@ from flask_restplus import Resource, fields
 from app.mod_user.service import User as UserService
 from app.mod_common.util import marshal_paginate
 from app.mod_role.util import register_roles
-from . import API
-
+from app.api import API
 
 NS = API.namespace('users', description='Operações da entidade Usuário')
 
@@ -11,7 +10,8 @@ _USER = API.model('User', {
     'id': fields.Integer(readOnly=True, description='Identificador único do usuário'),
     'name': fields.String(required=True, description='Nome do usuário'),
     'email': fields.String(required=True, description='E-mail do usuário'),
-    'password': fields.String(required=True, description='Senha do usuário')
+    'password': fields.String(required=True, description='Senha do usuário'),
+    'roles_id': fields.List(fields.Integer(required=False, description='Lista de ids das regras'))
 })
 
 @register_roles()
@@ -67,8 +67,7 @@ class UserItem(Resource):
         return res
 
 @register_roles()
-@NS.route('/',
-          '/page/<int:page>',
+@NS.route('/page/<int:page>',
           '/limit/<int:per_page>/page/<int:page>',
           '/order-by/<string:order_by>/limit/<int:per_page>/page/<int:page>',
           '/order-by/<string:order_by>/<string:sort>/limit/<int:per_page>/page/<int:page>')
