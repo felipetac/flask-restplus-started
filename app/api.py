@@ -1,7 +1,12 @@
 from flask import Blueprint
 from flask_restplus import Api
 
-BLUEPRINT = Blueprint('user_api', __name__)
+# pylint: disable=wrong-import-position
+from app.mod_user.api import API as UserNS
+from app.mod_role.api import API as RoleNS
+# pylint: enable=wrong-import-position
+
+BLUEPRINT = Blueprint('user_api', __name__, url_prefix='/api/1')
 
 API = Api(BLUEPRINT,
           version='0.1',
@@ -9,11 +14,5 @@ API = Api(BLUEPRINT,
           description='API geral da aplicação',)
 
 # Adicionando as rotas dos modulos
-
-# pylint: disable=wrong-import-position
-from app.mod_user.api import NS as UserNS
-from app.mod_role.api import NS as RoleNS
-# pylint: enable=wrong-import-position
-
 API.add_namespace(UserNS)
 API.add_namespace(RoleNS)

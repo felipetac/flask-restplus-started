@@ -28,23 +28,21 @@ MA = Marshmallow(APP)
 # Babel adds i18n and l10n support to any Flask application
 BA = Babel(APP)
 
-# Define os utilitários para serviços de regra
-from app.mod_role.util import Role # pylint: disable=wrong-import-position
-ROLE = Role(APP)
-
 # Sample HTTP error handling
 @APP.errorhandler(404)
 def not_found(error):
     ret = error.args if error.args else "Url não encontrada..."
     return jsonify({"result": ret}), 404
 
+from app.mod_role.util import create_all_roles
+
+# Register blueprint(s)
+from .api import BLUEPRINT as API # pylint: disable=wrong-import-position
+APP.register_blueprint(API)
+
 # Build the database:
 # This will create the database file using SQLAlchemy
 DB.create_all()
 
-# create all roles from classes API
-ROLE.create_all()
-
-# Register blueprint(s)
-from .api import BLUEPRINT as API # pylint: disable=wrong-import-position
-APP.register_blueprint(API, url_prefix='/api/1')
+with APP.app_context():
+    create_all_roles()

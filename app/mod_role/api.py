@@ -1,10 +1,9 @@
-from flask_restplus import Resource, fields
+from flask_restplus import Namespace, Resource, fields
 from app.mod_role.service import Role as RoleService
 from app.mod_common.util import marshal_paginate
-from app.api import API
-from .util import Role as ROLE
+from .util import register_role
 
-NS = API.namespace('roles', description='Operações da entidade Regra')
+API = Namespace('roles', description='Operações da entidade Regra')
 
 _ROLE = API.model('Role', {
     'id': fields.Integer(readOnly=True, description='Identificador único do regra'),
@@ -15,77 +14,77 @@ _ROLE = API.model('Role', {
     'role_desc': fields.String(required=True, description='Descrição da Regra')
 })
 
-@ROLE.register
-@NS.route('/')
+@register_role
+@API.route('/')
 class Role(Resource):
     '''Cria uma nova regra'''
-    @NS.doc('create_role')
-    @NS.expect(_ROLE)
-    @NS.response(201, 'Regra criada', _ROLE)
-    @NS.response(400, 'Formulário inválido')
-    #@NS.marshal_with(_ROLE, code=201)
+    @API.doc('create_role')
+    @API.expect(_ROLE)
+    @API.response(201, 'Regra criada', _ROLE)
+    @API.response(400, 'Formulário inválido')
+    #@API.marshal_with(_ROLE, code=201)
     def post(self):
         '''Cria uma nova regra'''
         res = RoleService.create(API.payload)
         if "form" in res.keys():
-            NS.abort(400, "Formulário inválido", status=res["form"], statusCode="400")
+            API.abort(400, "Formulário inválido", status=res["form"], statusCode="400")
         return res, 201
 
-@ROLE.register
-@NS.route('/<int:_id>')
-@NS.response(404, 'Regra não encontrado')
-@NS.param('_id', 'Identificador do regra')
+@register_role
+@API.route('/<int:_id>')
+@API.response(404, 'Regra não encontrado')
+@API.param('_id', 'Identificador do regra')
 class RoleItem(Resource):
     '''Exibe um regra e permite a manipulação do mesmo'''
-    @NS.doc('get_role')
-    #@NS.marshal_with(_ROLE)
-    @NS.response(200, 'Regra apresentado', _ROLE)
+    @API.doc('get_role')
+    #@API.marshal_with(_ROLE)
+    @API.response(200, 'Regra apresentado', _ROLE)
     def get(self, _id):
         '''Exibe um regra dado seu identificador'''
         res = RoleService.read(_id)
         if not res:
-            NS.abort(400, "Regra não encontrado", status={"id": _id}, statusCode="404")
+            API.abort(400, "Regra não encontrado", status={"id": _id}, statusCode="404")
         return res
 
-    @NS.doc('delete_role')
-    @NS.response(204, 'Regra apagada')
+    @API.doc('delete_role')
+    @API.response(204, 'Regra apagada')
     def delete(self, _id):
         '''Apaga um regra dado seu identificador'''
         res = RoleService.delete(_id)
         if not res:
-            NS.abort(400, "Regra não encontrado", status={"id": _id}, statusCode="404")
+            API.abort(400, "Regra não encontrado", status={"id": _id}, statusCode="404")
         return "Regra apagada com sucesso!", 204
 
-    @NS.doc('update_role')
-    @NS.expect(_ROLE)
-    @NS.response(200, 'Regra atualizada', _ROLE)
-    #@NS.marshal_with(_ROLE, code=200)
+    @API.doc('update_role')
+    @API.expect(_ROLE)
+    @API.response(200, 'Regra atualizada', _ROLE)
+    #@API.marshal_with(_ROLE, code=200)
     def put(self, _id):
         '''Atualiza um regra dado seu identificador'''
         res = RoleService.update(_id, API.payload)
         if not res:
-            NS.abort(400, "Regra não encontrado", status={"id": _id}, statusCode="404")
+            API.abort(400, "Regra não encontrado", status={"id": _id}, statusCode="404")
         return res
 
-@ROLE.register
-@NS.route('/page/<int:page>',
-          '/limit/<int:per_page>/page/<int:page>',
-          '/order-by/<string:order_by>/limit/<int:per_page>/page/<int:page>',
-          '/order-by/<string:order_by>/<string:sort>/limit/<int:per_page>/page/<int:page>')
-@NS.response(200, 'Regra listada')
-@NS.response(404, 'URL inválida')
-@NS.param('page', 'Numero da página')
-@NS.param('per_page', 'Quantidade de regras por página')
-@NS.param('order_by', 'Atributo de ordenação')
-@NS.param('sort', 'Tipo da ordenação')
+@register_role
+@API.route('/page/<int:page>',
+           '/limit/<int:per_page>/page/<int:page>',
+           '/order-by/<string:order_by>/limit/<int:per_page>/page/<int:page>',
+           '/order-by/<string:order_by>/<string:sort>/limit/<int:per_page>/page/<int:page>')
+@API.response(200, 'Regra listada')
+@API.response(404, 'URL inválida')
+@API.param('page', 'Numero da página')
+@API.param('per_page', 'Quantidade de regras por página')
+@API.param('order_by', 'Atributo de ordenação')
+@API.param('sort', 'Tipo da ordenação')
 class RolePaginate(Resource):
     '''Lista os regras com paginação'''
-    @NS.doc('list_roles')
-    #@NS.marshal_list_with(_ROLE)
+    @API.doc('list_roles')
+    #@API.marshal_list_with(_ROLE)
     @marshal_paginate
     def get(self, page=None, per_page=None, order_by=None, sort=None):
         '''Lista os regras com paginação'''
         res = RoleService.list(page, per_page, order_by, sort)
         if isinstance(res, dict) and "form" in res.keys():
-            NS.abort(404, "URL inválida", status=res["form"], statusCode="400")
+            API.abort(404, "URL inválida", status=res["form"], statusCode="400")
         return res
