@@ -15,6 +15,8 @@ class User(Base):
 
     @classmethod
     def create(cls, json_obj):
+        if "id" in json_obj.keys():
+            del json_obj["id"]
         form = UserForm.from_json(json_obj)
         form.roles_id.choices = RoleService.get_choices()
         if form.validate_on_submit():
@@ -27,6 +29,8 @@ class User(Base):
 
     @classmethod
     def update(cls, entity_id, json_obj):
+        if "id" in json_obj.keys():
+            del json_obj["id"]
         if entity_id and isinstance(entity_id, int):
             user = cls.read(entity_id, serializer=False)
             if user:

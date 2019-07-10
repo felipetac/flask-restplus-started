@@ -2,7 +2,7 @@ from flask_restplus import Resource, fields
 from app.mod_role.service import Role as RoleService
 from app.mod_common.util import marshal_paginate
 from app.api import API
-from .util import register_roles
+from .util import Role as ROLE
 
 NS = API.namespace('roles', description='Operações da entidade Regra')
 
@@ -15,7 +15,7 @@ _ROLE = API.model('Role', {
     'role_desc': fields.String(required=True, description='Descrição da Regra')
 })
 
-@register_roles()
+@ROLE.register
 @NS.route('/')
 class Role(Resource):
     '''Cria uma nova regra'''
@@ -31,7 +31,7 @@ class Role(Resource):
             NS.abort(400, "Formulário inválido", status=res["form"], statusCode="400")
         return res, 201
 
-@register_roles()
+@ROLE.register
 @NS.route('/<int:_id>')
 @NS.response(404, 'Regra não encontrado')
 @NS.param('_id', 'Identificador do regra')
@@ -67,7 +67,7 @@ class RoleItem(Resource):
             NS.abort(400, "Regra não encontrado", status={"id": _id}, statusCode="404")
         return res
 
-@register_roles()
+@ROLE.register
 @NS.route('/page/<int:page>',
           '/limit/<int:per_page>/page/<int:page>',
           '/order-by/<string:order_by>/limit/<int:per_page>/page/<int:page>',
