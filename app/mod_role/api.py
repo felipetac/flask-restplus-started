@@ -1,6 +1,6 @@
 from flask_restplus import Namespace, Resource, fields
-from app.mod_role.service import Role as RoleService
 from app.mod_common.util import Util as UTIL
+from .service import Role as RoleService
 from .util import Role as ROLE
 
 API = Namespace('roles', description='Operações da entidade Regra')
