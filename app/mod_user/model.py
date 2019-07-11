@@ -1,8 +1,8 @@
 # Hash password Automagic
 from sqlalchemy_utils import PasswordType, EmailType
 from marshmallow import fields
-from app import DB, MA, PS
-from app.mod_common.model import Base
+from app import PS
+from app.mod_common.model import DB, Base, Schema
 from app.mod_role.model import ROLES, RoleSchema
 
 class User(Base):
@@ -17,7 +17,7 @@ class User(Base):
     roles = DB.relationship('Role', secondary=ROLES,
                             backref=DB.backref('users'))
 
-class UserSchema(MA.ModelSchema):
+class UserSchema(Schema):
 
     class Meta:
         model = User

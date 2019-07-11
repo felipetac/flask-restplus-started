@@ -1,7 +1,6 @@
-from app import DB
-from app.mod_role.model import Role as RoleModel, RoleSchema
-from app.mod_role.form import Role as RoleForm
-from app.mod_common.service import Base
+from app.mod_common.service import DB, Base
+from .model import Role as RoleModel, RoleSchema
+from .form import Role as RoleForm
 
 class Role(Base):
 

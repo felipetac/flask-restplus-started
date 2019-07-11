@@ -1,4 +1,4 @@
-from app import DB
+from app import DB, MA
 
 class Base(DB.Model):
 
@@ -8,3 +8,5 @@ class Base(DB.Model):
     date_created = DB.Column(DB.DateTime, default=DB.func.current_timestamp())
     date_modified = DB.Column(DB.DateTime, default=DB.func.current_timestamp(),
                               onupdate=DB.func.current_timestamp())
+
+Schema = MA.ModelSchema

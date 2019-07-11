@@ -1,7 +1,7 @@
 from flask_restplus import Namespace, Resource, fields
-from app.mod_user.service import User as UserService
 from app.mod_common.util import Util as UTIL
 from app.mod_role.util import Role as ROLE
+from .service import User as UserService
 
 API = Namespace('users', description='Operações da entidade Usuário')
 

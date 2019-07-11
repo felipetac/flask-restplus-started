@@ -1,8 +1,7 @@
 from abc import ABC, abstractstaticmethod, abstractclassmethod # Para implementar abstract class
 import math
-from app import DB, MA
 from .util import get_attributes_class
-from .model import Base as BaseModel
+from .model import DB, MA, Base as BaseModel
 from .form import RestForm, ListForm
 
 class Base(ABC):

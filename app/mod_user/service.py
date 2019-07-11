@@ -1,8 +1,7 @@
-from app import DB
-from app.mod_user.model import User as UserModel, UserSchema
-from app.mod_user.form import User as UserForm
-from app.mod_common.service import Base
+from app.mod_common.service import DB, Base
 from app.mod_role.service import Role as RoleService
+from .model import User as UserModel, UserSchema
+from .form import User as UserForm
 
 class User(Base):
 
