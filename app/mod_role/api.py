@@ -1,5 +1,6 @@
 from flask_restplus import Namespace, Resource, fields
 from app.mod_common.util import Util as UTIL
+from app.mod_auth.util import Auth
 from .service import Role as RoleService
 from .util import Role as ROLE
 
@@ -82,6 +83,7 @@ class RolePaginate(Resource):
     @API.doc('list_roles')
     #@API.marshal_list_with(_ROLE)
     @UTIL.marshal_paginate
+    @Auth.role_required
     def get(self, page=None, per_page=None, order_by=None, sort=None):
         '''Lista os regras com paginação'''
         res = RoleService.list(page, per_page, order_by, sort)

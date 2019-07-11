@@ -43,6 +43,17 @@ class User(Base):
                 return {"form": form.errors}
         return None
 
+    @classmethod
+    def get_by_email(cls, email, serializer=True):
+        if email and isinstance(email, str):
+            user = UserModel.query.filter_by(email=email).first()
+            if user:
+                if serializer:
+                    user_schema = UserSchema()
+                    return {"data": user_schema.dump(user)}
+                return user
+        return None
+
     @staticmethod
     def _populate_obj(form, user):
         form.populate_obj(user)
