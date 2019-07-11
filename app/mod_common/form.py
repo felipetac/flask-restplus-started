@@ -4,7 +4,7 @@ import wtforms_json
 from wtforms import IntegerField, SelectField
 from wtforms.validators import Optional, NumberRange
 from app import DB, PP as PER_PAGE
-from app.mod_common.validator import Unique, Email
+from .validator import Unique, Email
 
 wtforms_json.init()
 
