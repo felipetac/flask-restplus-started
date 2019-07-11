@@ -45,4 +45,4 @@ APP.register_blueprint(API)
 DB.create_all()
 
 # Persist All roles in database
-Role(APP).create_all_roles()
+Role(APP).create_all()

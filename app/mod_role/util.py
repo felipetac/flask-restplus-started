@@ -41,7 +41,7 @@ class Role(object):
                                    "role_name": class_name+"."+method})
         return _class
 
-    def create_all_roles(self):
+    def create_all(self):
         with self.app.app_context():
             for obj in ROLES_REGISTRY:
                 if not RoleService.read_by_attrs(obj["module_name"],
