@@ -34,7 +34,7 @@ def not_found(error):
     ret = error.args if error.args else "Url não encontrada..."
     return jsonify({"result": ret}), 404
 
-from app.mod_role.util import create_all_roles
+from app.mod_role.util import Role # pylint: disable=wrong-import-position
 
 # Register blueprint(s)
 from .api import BLUEPRINT as API # pylint: disable=wrong-import-position
@@ -44,5 +44,5 @@ APP.register_blueprint(API)
 # This will create the database file using SQLAlchemy
 DB.create_all()
 
-with APP.app_context():
-    create_all_roles()
+# Persist All roles in database
+Role(APP).create_all_roles()

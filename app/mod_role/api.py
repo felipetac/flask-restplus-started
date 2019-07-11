@@ -1,7 +1,7 @@
 from flask_restplus import Namespace, Resource, fields
 from app.mod_role.service import Role as RoleService
-from app.mod_common.util import marshal_paginate
-from .util import register_role
+from app.mod_common.util import Util as UTIL
+from .util import Role as ROLE
 
 API = Namespace('roles', description='Operações da entidade Regra')
 
@@ -14,7 +14,7 @@ _ROLE = API.model('Role', {
     'role_desc': fields.String(required=True, description='Descrição da Regra')
 })
 
-@register_role
+@ROLE.register
 @API.route('/')
 class Role(Resource):
     '''Cria uma nova regra'''
@@ -30,7 +30,7 @@ class Role(Resource):
             API.abort(400, "Formulário inválido", status=res["form"], statusCode="400")
         return res, 201
 
-@register_role
+@ROLE.register
 @API.route('/<int:_id>')
 @API.response(404, 'Regra não encontrado')
 @API.param('_id', 'Identificador do regra')
@@ -66,7 +66,7 @@ class RoleItem(Resource):
             API.abort(400, "Regra não encontrado", status={"id": _id}, statusCode="404")
         return res
 
-@register_role
+@ROLE.register
 @API.route('/page/<int:page>',
            '/limit/<int:per_page>/page/<int:page>',
            '/order-by/<string:order_by>/limit/<int:per_page>/page/<int:page>',
@@ -81,7 +81,7 @@ class RolePaginate(Resource):
     '''Lista os regras com paginação'''
     @API.doc('list_roles')
     #@API.marshal_list_with(_ROLE)
-    @marshal_paginate
+    @UTIL.marshal_paginate
     def get(self, page=None, per_page=None, order_by=None, sort=None):
         '''Lista os regras com paginação'''
         res = RoleService.list(page, per_page, order_by, sort)

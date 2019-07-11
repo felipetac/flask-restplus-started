@@ -1,7 +1,7 @@
 from flask_restplus import Namespace, Resource, fields
 from app.mod_user.service import User as UserService
-from app.mod_common.util import marshal_paginate
-from app.mod_role.util import register_role
+from app.mod_common.util import Util as UTIL
+from app.mod_role.util import Role as ROLE
 
 API = Namespace('users', description='Operações da entidade Usuário')
 
@@ -13,7 +13,7 @@ _USER = API.model('User', {
     'roles_id': fields.List(fields.Integer(required=False, description='Lista de ids das regras'))
 })
 
-@register_role
+@ROLE.register
 @API.route('/')
 class User(Resource):
     '''Cria um novo usuario'''
@@ -29,7 +29,7 @@ class User(Resource):
             API.abort(400, "Formulário inválido", status=res["form"], statusCode="400")
         return res, 201
 
-@register_role
+@ROLE.register
 @API.route('/<int:_id>')
 @API.response(404, 'Usuário não encontrado')
 @API.param('_id', 'Identificador do usuário')
@@ -65,7 +65,7 @@ class UserItem(Resource):
             API.abort(400, "Usuário não encontrado", status={"id": _id}, statusCode="404")
         return res
 
-@register_role
+@ROLE.register
 @API.route('/page/<int:page>',
            '/limit/<int:per_page>/page/<int:page>',
            '/order-by/<string:order_by>/limit/<int:per_page>/page/<int:page>',
@@ -80,7 +80,7 @@ class UserPaginate(Resource):
     '''Lista os usuários com paginação'''
     @API.doc('list_users')
     #@API.marshal_list_with(_USER)
-    @marshal_paginate
+    @UTIL.marshal_paginate
     def get(self, page=None, per_page=None, order_by=None, sort=None):
         '''Lista os usuários com paginação'''
         res = UserService.list(page, per_page, order_by, sort)
