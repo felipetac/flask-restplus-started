@@ -1,6 +1,7 @@
 from app.mod_common.service import DB, Base
 from .model import Role as RoleModel, RoleSchema
 from .form import Role as RoleForm
+import datetime
 
 class Role(Base):
 
@@ -31,6 +32,7 @@ class Role(Base):
                 form = RoleForm.from_json(json_obj, obj=role) # obj to raising a ValidationError
                 if form.validate_on_submit():
                     form.populate_obj(role)
+                    role.date_modified = DB.func.current_timestamp()
                     DB.session.commit()
                     role_schema = RoleSchema()
                     return role_schema.dump(role) # Return role with last id insert
