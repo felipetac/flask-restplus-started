@@ -1,6 +1,7 @@
 from flask_restplus import Namespace, Resource, fields
 from app.mod_common.util import Util as UTIL
 from app.mod_auth.util import Util as AUTH
+from app.mod_audit.util import Util as AUDIT
 from .service import Service
 from .util import Util as ROLE
 
@@ -40,6 +41,7 @@ class RoleItem(Resource):
     @API.doc('get_role')
     #@API.marshal_with(_ROLE)
     @API.response(200, 'Regra apresentado', _ROLE)
+    @AUDIT.register
     def get(self, _id):
         '''Exibe um regra dado seu identificador'''
         res = Service.read(_id)
@@ -84,6 +86,7 @@ class RolePaginate(Resource):
     #@API.marshal_list_with(_ROLE)
     @UTIL.marshal_paginate
     @AUTH.role_required
+    @AUDIT.register
     def get(self, page=None, per_page=None, order_by=None, sort=None):
         '''Lista os regras com paginação'''
         res = Service.list(page, per_page, order_by, sort)

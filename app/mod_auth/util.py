@@ -11,7 +11,7 @@ class Util(object):
     def required(cls, function):
         @wraps(function)
         def wrapper(*args, **kwargs):
-            user = cls.__is_member()
+            user = cls.is_member()
             if user:
                 return function(*args, **kwargs)
             abort(401, "Token inválido!", statusCode=401)
@@ -21,8 +21,9 @@ class Util(object):
     def role_required(cls, function):
         @wraps(function)
         def wrapper(*args, **kwargs):
-            user = cls.__is_member()
-            if user:
+            ret = cls.is_member()
+            if ret and not isinstance(ret, str):
+                user = ret
                 module_name = args[0].__class__.__module__
                 class_name = args[0].__class__.__name__
                 method_name = function.__name__
@@ -31,11 +32,11 @@ class Util(object):
                     return function(*args, **kwargs)
                 abort(401, "Token não possui autorização " +
                       "para efetuar esta requisição!", statusCode=401)
-            abort(401, "Token inválido!", statusCode=401)
+            abort(401, ret, statusCode=401)
         return wrapper
 
     @staticmethod
-    def __is_member():
+    def is_member():
         try:
             key = request.headers.get('Authorization')
             if key:
@@ -45,7 +46,7 @@ class Util(object):
                 user = UserService.get_by_email(payloads["email"], serializer=False)
                 if user:
                     return user
-                abort(401, "Token inválido!", statusCode=401)
-            abort(401, "Token é requerido para esta requisição!", statusCode=401)
+                return "Token inválido!"
+            return "Token é requerido para esta requisição!"
         except jwt.exceptions.DecodeError:
-            abort(401, "Token inválido!", statusCode=401)
+            return "Token inválido!"
