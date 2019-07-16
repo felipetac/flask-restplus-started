@@ -2,10 +2,10 @@
 from sqlalchemy_utils import PasswordType, EmailType
 from marshmallow import fields
 from app import PS
-from app.mod_common.model import DB, Base, Schema
-from app.mod_role.model import ROLES, RoleSchema
+from app.mod_common.model import DB, BaseModel, BaseSchema
+from app.mod_role.model import ROLES, Model as Role, Schema as RoleSchema
 
-class User(Base):
+class Model(BaseModel):
 
     __tablename__ = 'app_user'
 
@@ -14,13 +14,13 @@ class User(Base):
     password = DB.Column(PasswordType(
         onload=lambda **kwargs: dict(schemes=PS, **kwargs) # pylint: disable=unnecessary-lambda
     ), nullable=False)
-    roles = DB.relationship('Role', secondary=ROLES,
+    roles = DB.relationship(Role, secondary=ROLES,
                             backref=DB.backref('users'))
 
-class UserSchema(Schema):
+class Schema(BaseSchema):
 
     class Meta:
-        model = User
+        model = Model
         exclude = ("password", ) # Exclude password from serialization
 
     roles = fields.Nested(RoleSchema, many=True,

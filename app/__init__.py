@@ -34,7 +34,7 @@ def not_found(error):
     ret = error.args if error.args else "Url não encontrada..."
     return jsonify({"result": ret}), 404
 
-from app.mod_role.util import Role # pylint: disable=wrong-import-position
+from app.mod_role.util import Util as Role # pylint: disable=wrong-import-position
 
 # Register blueprint(s)
 from .api import BLUEPRINT as API # pylint: disable=wrong-import-position

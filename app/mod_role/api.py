@@ -1,8 +1,8 @@
 from flask_restplus import Namespace, Resource, fields
 from app.mod_common.util import Util as UTIL
-from app.mod_auth.util import Auth
-from .service import Role as RoleService
-from .util import Role as ROLE
+from app.mod_auth.util import Util as AUTH
+from .service import Service
+from .util import Util as ROLE
 
 API = Namespace('roles', description='Operações da entidade Regra')
 
@@ -26,7 +26,7 @@ class Role(Resource):
     #@API.marshal_with(_ROLE, code=201)
     def post(self):
         '''Cria uma nova regra'''
-        res = RoleService.create(API.payload)
+        res = Service.create(API.payload)
         if "form" in res.keys():
             API.abort(400, "Formulário inválido", status=res["form"], statusCode="400")
         return res, 201
@@ -42,7 +42,7 @@ class RoleItem(Resource):
     @API.response(200, 'Regra apresentado', _ROLE)
     def get(self, _id):
         '''Exibe um regra dado seu identificador'''
-        res = RoleService.read(_id)
+        res = Service.read(_id)
         if not res:
             API.abort(400, "Regra não encontrado", status={"id": _id}, statusCode="404")
         return res
@@ -51,7 +51,7 @@ class RoleItem(Resource):
     @API.response(204, 'Regra apagada')
     def delete(self, _id):
         '''Apaga um regra dado seu identificador'''
-        res = RoleService.delete(_id)
+        res = Service.delete(_id)
         if not res:
             API.abort(400, "Regra não encontrado", status={"id": _id}, statusCode="404")
         return "Regra apagada com sucesso!", 204
@@ -62,7 +62,7 @@ class RoleItem(Resource):
     #@API.marshal_with(_ROLE, code=200)
     def put(self, _id):
         '''Atualiza um regra dado seu identificador'''
-        res = RoleService.update(_id, API.payload)
+        res = Service.update(_id, API.payload)
         if not res:
             API.abort(400, "Regra não encontrado", status={"id": _id}, statusCode="404")
         return res
@@ -83,10 +83,10 @@ class RolePaginate(Resource):
     @API.doc('list_roles')
     #@API.marshal_list_with(_ROLE)
     @UTIL.marshal_paginate
-    @Auth.role_required
+    @AUTH.role_required
     def get(self, page=None, per_page=None, order_by=None, sort=None):
         '''Lista os regras com paginação'''
-        res = RoleService.list(page, per_page, order_by, sort)
+        res = Service.list(page, per_page, order_by, sort)
         if isinstance(res, dict) and "form" in res.keys():
             API.abort(404, "URL inválida", status=res["form"], statusCode="400")
         return res

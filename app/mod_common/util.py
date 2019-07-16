@@ -1,7 +1,6 @@
 from urllib import parse
 from functools import wraps
 from flask import request
-
 #class method decorator
 class Util(object):
 
@@ -19,8 +18,6 @@ class Util(object):
             return data
         return wrapper
 
-
 def get_attributes_class(cls):
     return [i for i in dir(cls) if not callable(i) and not i.startswith('_') and  \
             i not in ["metadata", "query", "query_class"]]
-

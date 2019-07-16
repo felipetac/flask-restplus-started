@@ -1,9 +1,9 @@
 from flask import current_app
 import jwt
-from app.mod_user.service import User as UserService
+from app.mod_user.service import Service as UserService
 from app.mod_auth.form import LoginForm
 
-class Auth:
+class Service:
 
     @staticmethod
     def get_key(json_obj):

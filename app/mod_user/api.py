@@ -1,7 +1,7 @@
 from flask_restplus import Namespace, Resource, fields
 from app.mod_common.util import Util as UTIL
-from app.mod_role.util import Role as ROLE
-from .service import User as UserService
+from app.mod_role.util import Util as ROLE
+from .service import Service
 
 API = Namespace('users', description='Operações da entidade Usuário')
 
@@ -24,7 +24,7 @@ class User(Resource):
     #@API.marshal_with(_USER, code=201)
     def post(self):
         '''Cria um novo usuário'''
-        res = UserService.create(API.payload)
+        res = Service.create(API.payload)
         if "form" in res.keys():
             API.abort(400, "Formulário inválido", status=res["form"], statusCode="400")
         return res, 201
@@ -40,7 +40,7 @@ class UserItem(Resource):
     @API.response(200, 'Usuário apresentado', _USER)
     def get(self, _id):
         '''Exibe um usuário dado seu identificador'''
-        res = UserService.read(_id)
+        res = Service.read(_id)
         if not res:
             API.abort(400, "Usuário não encontrado", status={"id": _id}, statusCode="404")
         return res
@@ -49,7 +49,7 @@ class UserItem(Resource):
     @API.response(204, 'Usuário apagado')
     def delete(self, _id):
         '''Apaga um usuário dado seu identificador'''
-        res = UserService.delete(_id)
+        res = Service.delete(_id)
         if not res:
             API.abort(400, "Usuário não encontrado", status={"id": _id}, statusCode="404")
         return "Usuário apagado com sucesso!", 204
@@ -60,7 +60,7 @@ class UserItem(Resource):
     #@API.marshal_with(_USER, code=200)
     def put(self, _id):
         '''Atualiza um usuário dado seu identificador'''
-        res = UserService.update(_id, API.payload)
+        res = Service.update(_id, API.payload)
         if not res:
             API.abort(400, "Usuário não encontrado", status={"id": _id}, statusCode="404")
         return res
@@ -83,7 +83,7 @@ class UserPaginate(Resource):
     @UTIL.marshal_paginate
     def get(self, page=None, per_page=None, order_by=None, sort=None):
         '''Lista os usuários com paginação'''
-        res = UserService.list(page, per_page, order_by, sort)
+        res = Service.list(page, per_page, order_by, sort)
         if isinstance(res, dict) and "form" in res.keys():
             API.abort(404, "URL inválida", status=res["form"], statusCode="400")
         return res

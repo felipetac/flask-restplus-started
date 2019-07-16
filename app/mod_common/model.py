@@ -1,6 +1,6 @@
 from app import DB, MA
 
-class Base(DB.Model):
+class BaseModel(DB.Model):
 
     __abstract__ = True
 
@@ -9,4 +9,4 @@ class Base(DB.Model):
     date_modified = DB.Column(DB.DateTime, default=DB.func.current_timestamp(),
                               onupdate=DB.func.current_timestamp())
 
-Schema = MA.ModelSchema
+BaseSchema = MA.ModelSchema

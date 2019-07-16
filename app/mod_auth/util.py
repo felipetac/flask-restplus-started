@@ -2,11 +2,10 @@ from functools import wraps
 from flask import request, current_app
 from flask_restplus import abort
 import jwt
-from app.mod_user.service import User as UserService
-from app.mod_role.service import Role
+from app.mod_user.service import Service as UserService
+from app.mod_role.service import Service as RoleService
 
-
-class Auth(object):
+class Util(object):
 
     @classmethod
     def required(cls, function):
@@ -27,7 +26,7 @@ class Auth(object):
                 module_name = args[0].__class__.__module__
                 class_name = args[0].__class__.__name__
                 method_name = function.__name__
-                role = Role.read_by_attrs(module_name, class_name, method_name)
+                role = RoleService.read_by_attrs(module_name, class_name, method_name)
                 if role and role.role_name in [role.role_name for role in user.roles]:
                     return function(*args, **kwargs)
                 abort(401, "Token não possui autorização " +

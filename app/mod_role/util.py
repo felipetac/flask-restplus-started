@@ -1,8 +1,8 @@
-from .service import Role as RoleService
+from .service import Service
 
-ROLES_REGISTRY = []
+_ROLES_REGISTRY = []
 
-class Role(object):
+class Util(object):
 
     def __init__(self, app):
         self.app = app
@@ -15,16 +15,16 @@ class Role(object):
                     not func.startswith("__")]
         methods = [m for m in methods if m in ["get", "post", "put", "delete"]]
         for method in methods:
-            ROLES_REGISTRY.append({"module_name": module_name,
-                                   "class_name": class_name,
-                                   "method_name": method,
-                                   "role_name": class_name+"."+method})
+            _ROLES_REGISTRY.append({"module_name": module_name,
+                                    "class_name": class_name,
+                                    "method_name": method,
+                                    "role_name": class_name+"."+method})
         return _class
 
     def create_all(self):
         with self.app.app_context():
-            for obj in ROLES_REGISTRY:
-                if not RoleService.read_by_attrs(obj["module_name"],
-                                                 obj["class_name"],
-                                                 obj["method_name"]):
-                    RoleService.create(obj)
+            for obj in _ROLES_REGISTRY:
+                if not Service.read_by_attrs(obj["module_name"],
+                                             obj["class_name"],
+                                             obj["method_name"]):
+                    Service.create(obj)

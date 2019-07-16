@@ -1,13 +1,13 @@
 
 from flask_restplus import Namespace, Resource, fields
-from .service import Auth as AuthService
+from .service import Service
 
 API = Namespace('auth', description='Operações de Autenticação')
 
 _USER = API.model('Login', {
-    'email': fields.String(required=True, description='Email do Usuário', 
+    'email': fields.String(required=True, description='Email do Usuário',
                            example="carlos.silva@gmail.com"),
-    'password': fields.String(required=True, description='Senha do Usuário', 
+    'password': fields.String(required=True, description='Senha do Usuário',
                               example="minhasenha123")
 })
 
@@ -24,7 +24,7 @@ class Key(Resource):
     @API.doc('get_key')
     def post(self):
         '''Obter a chave de acesso'''
-        res = AuthService.get_key(API.payload)
+        res = Service.get_key(API.payload)
         if "form" in res.keys():
             API.abort(400, "Formulário inválido", status=res["form"], statusCode="400")
         return res["data"], 201

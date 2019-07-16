@@ -1,20 +1,20 @@
-from abc import ABC, abstractstaticmethod, abstractclassmethod # Para implementar abstract class
+from abc import ABC #, abstractstaticmethod, abstractclassmethod # Para implementar abstract class
 import math
 from .util import get_attributes_class
-from .model import DB, MA, Base as BaseModel
+from .model import DB, BaseModel, BaseSchema
 from .form import RestForm, ListForm
 
-class Base(ABC):
+class BaseService(ABC):
 
     @classmethod
     def list(cls, page=None, per_page=None, order_by=None, sort=None):
-        if not cls.Meta.model or not issubclass(cls.Meta.model, BaseModel):
+        if isinstance(cls.Meta.model, BaseModel) or not issubclass(cls.Meta.model, BaseModel):
             raise Exception("É necessário passar o atributo 'model'" +
                             "(Objeto SQLAlchemy) na classe inner Meta")
-        if not cls.Meta.schema or not issubclass(cls.Meta.schema, MA.ModelSchema):
+        if isinstance(cls.Meta.schema, BaseSchema) or not issubclass(cls.Meta.schema, BaseSchema):
             raise Exception("É necessário passar o atributo 'schema'" +
                             "(Objeto Marshmallow) na classe inner Meta")
-        if not cls.Meta.form or not issubclass(cls.Meta.form, RestForm):
+        if isinstance(cls.Meta.form, RestForm) or not issubclass(cls.Meta.form, RestForm):
             raise Exception("É necessário passar o atributo 'form'" +
                             "(Objeto WTForm) na classe inner Meta")
         obj = {}
@@ -49,10 +49,10 @@ class Base(ABC):
 
     @classmethod
     def read(cls, entity_id, serializer=True):
-        if not cls.Meta.model or not issubclass(cls.Meta.model, BaseModel):
+        if isinstance(cls.Meta.model, BaseModel) or not issubclass(cls.Meta.model, BaseModel):
             raise Exception("É necessário passar o atributo 'model'" +
                             "(Objeto SQLAlchemy) na classe inner Meta")
-        if not cls.Meta.schema or not issubclass(cls.Meta.schema, MA.ModelSchema):
+        if isinstance(cls.Meta.schema, BaseSchema) or not issubclass(cls.Meta.schema, BaseSchema):
             raise Exception("É necessário passar o atributo 'schema'" +
                             "(Objeto Marshmallow) na classe inner Meta")
         if entity_id and isinstance(entity_id, int):
@@ -77,17 +77,36 @@ class Base(ABC):
                 return True
         return None
 
-    @abstractstaticmethod
-    def create(json_obj):
-        pass
+    @classmethod
+    def create(cls, json_obj):
+        form = cls.Meta.form.from_json(json_obj)
+        if form.validate():
+            model = cls.Meta.model()
+            form.populate_obj(model)
+            DB.session.add(model)
+            DB.session.commit()
+            schema = cls.Meta.schema()
+            return schema.dump(model)
+        return {"form": form.errors}
 
-    @abstractclassmethod
+    @classmethod
     def update(cls, entity_id, json_obj):
-        pass
+        if entity_id and isinstance(entity_id, int):
+            obj = cls.read(entity_id, serializer=False)
+            if obj:
+                form = cls.Meta.form.from_json(json_obj, obj=obj)
+                if form.validate_on_submit():
+                    form.populate_obj(obj)
+                    obj.date_modified = DB.func.current_timestamp()
+                    DB.session.commit()
+                    schema = cls.Meta.schema()
+                    return schema.dump(obj)
+                return {"form": form.errors}
+        return None
 
     class Meta:
-        model = None
-        schema = None
-        form = None
-        order_by = None
+        model = BaseModel
+        schema = BaseSchema
+        form = RestForm
+        order_by = "id"
         sort = "desc"

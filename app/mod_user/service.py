@@ -1,14 +1,14 @@
-from app.mod_common.service import DB, Base
-from app.mod_role.service import Role as RoleService
-from .model import User as UserModel, UserSchema
-from .form import User as UserForm
+from app.mod_common.service import DB, BaseService
+from app.mod_role.service import Service as RoleService
+from .model import Model, Schema
+from .form import Form
 
-class User(Base):
+class Service(BaseService):
 
     class Meta:
-        model = UserModel
-        form = UserForm
-        schema = UserSchema
+        model = Model
+        form = Form
+        schema = Schema
         #order_by = "id" #caso queira mudar
         #sort = "desc" #caso queira mudar
 
@@ -16,13 +16,13 @@ class User(Base):
     def create(cls, json_obj):
         if "id" in json_obj.keys():
             del json_obj["id"]
-        form = UserForm.from_json(json_obj)
+        form = Form.from_json(json_obj)
         form.roles_id.choices = RoleService.get_choices()
         if form.validate_on_submit():
-            user = cls._populate_obj(form, UserModel())
+            user = cls._populate_obj(form, Model())
             DB.session.add(user)
             DB.session.commit()
-            user_schema = UserSchema()
+            user_schema = Schema()
             return user_schema.dump(user) # Return user with last id insert
         return {"form": form.errors}
 
@@ -33,13 +33,13 @@ class User(Base):
         if entity_id and isinstance(entity_id, int):
             user = cls.read(entity_id, serializer=False)
             if user:
-                form = UserForm.from_json(json_obj, obj=user) # obj to raising a ValidationError
+                form = Form.from_json(json_obj, obj=user) # obj to raising a ValidationError
                 form.roles_id.choices = RoleService.get_choices()
                 if form.validate_on_submit():
                     user = cls._populate_obj(form, user)
                     user.date_modified = DB.func.current_timestamp()
                     DB.session.commit()
-                    user_schema = UserSchema()
+                    user_schema = Schema()
                     return user_schema.dump(user) # Return user with last id insert
                 return {"form": form.errors}
         return None
@@ -47,10 +47,10 @@ class User(Base):
     @classmethod
     def get_by_email(cls, email, serializer=True):
         if email and isinstance(email, str):
-            user = UserModel.query.filter_by(email=email).first()
+            user = Model.query.filter_by(email=email).first()
             if user:
                 if serializer:
-                    user_schema = UserSchema()
+                    user_schema = Schema()
                     return {"data": user_schema.dump(user)}
                 return user
         return None
