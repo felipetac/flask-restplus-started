@@ -1,5 +1,7 @@
 
 from flask_restplus import Namespace, Resource, fields
+from app.mod_audit.util import Util as AUDIT
+from app.mod_role.util import Util as ROLE
 from .service import Service
 
 API = Namespace('auth', description='Operações de Autenticação')
@@ -15,6 +17,7 @@ _KEY = API.model('Key', {
     'key': fields.String(required=True, description='Chave de acesso'),
 })
 
+@ROLE.register
 @API.route('/getkey')
 @API.expect(_USER)
 @API.response(201, 'Chave  de acesso disponibilizada', _KEY)
@@ -22,6 +25,7 @@ _KEY = API.model('Key', {
 class Key(Resource):
     '''Obter a chave de acesso'''
     @API.doc('get_key')
+    @AUDIT.register
     def post(self):
         '''Obter a chave de acesso'''
         res = Service.get_key(API.payload)

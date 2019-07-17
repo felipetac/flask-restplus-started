@@ -1,7 +1,10 @@
 from flask_restplus import Namespace, Resource
 from app.mod_common.util import Util as UTIL
+from app.mod_role.util import Util as ROLE
+from app.mod_auth.util import Util as AUTH
+from .util import Util as AUDIT
 from .service import Service
-from .util import Util as ROLE
+
 
 API = Namespace('audit', description='Operações da entidade Audit')
 
@@ -20,6 +23,8 @@ class AuditPaginate(Resource):
     '''Lista as ações com paginação'''
     @API.doc('list_roles')
     #@API.marshal_list_with(_ROLE)
+    @AUTH.role_required
+    @AUDIT.register
     @UTIL.marshal_paginate
     def get(self, page=None, per_page=None, order_by=None, sort=None):
         '''Lista as ações com paginação'''

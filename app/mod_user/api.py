@@ -1,6 +1,8 @@
 from flask_restplus import Namespace, Resource, fields
 from app.mod_common.util import Util as UTIL
 from app.mod_role.util import Util as ROLE
+from app.mod_audit.util import Util as AUDIT
+from app.mod_auth.util import Util as AUTH
 from .service import Service
 
 API = Namespace('users', description='Operações da entidade Usuário')
@@ -22,6 +24,8 @@ class User(Resource):
     @API.response(201, 'Usuário criado', _USER)
     @API.response(400, 'Formulário inválido')
     #@API.marshal_with(_USER, code=201)
+    @AUTH.role_required
+    @AUDIT.register
     def post(self):
         '''Cria um novo usuário'''
         res = Service.create(API.payload)
@@ -38,6 +42,8 @@ class UserItem(Resource):
     @API.doc('get_user')
     #@API.marshal_with(_USER)
     @API.response(200, 'Usuário apresentado', _USER)
+    @AUTH.role_required
+    @AUDIT.register
     def get(self, _id):
         '''Exibe um usuário dado seu identificador'''
         res = Service.read(_id)
@@ -47,6 +53,8 @@ class UserItem(Resource):
 
     @API.doc('delete_user')
     @API.response(204, 'Usuário apagado')
+    @AUTH.role_required
+    @AUDIT.register
     def delete(self, _id):
         '''Apaga um usuário dado seu identificador'''
         res = Service.delete(_id)
@@ -58,6 +66,8 @@ class UserItem(Resource):
     @API.expect(_USER)
     @API.response(200, 'Usuário atualizado', _USER)
     #@API.marshal_with(_USER, code=200)
+    @AUTH.role_required
+    @AUDIT.register
     def put(self, _id):
         '''Atualiza um usuário dado seu identificador'''
         res = Service.update(_id, API.payload)
@@ -80,6 +90,8 @@ class UserPaginate(Resource):
     '''Lista os usuários com paginação'''
     @API.doc('list_users')
     #@API.marshal_list_with(_USER)
+    @AUTH.required
+    @AUDIT.register
     @UTIL.marshal_paginate
     def get(self, page=None, per_page=None, order_by=None, sort=None):
         '''Lista os usuários com paginação'''

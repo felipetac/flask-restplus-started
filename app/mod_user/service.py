@@ -37,7 +37,6 @@ class Service(BaseService):
                 form.roles_id.choices = RoleService.get_choices()
                 if form.validate_on_submit():
                     user = cls._populate_obj(form, user)
-                    user.date_modified = DB.func.current_timestamp()
                     DB.session.commit()
                     user_schema = Schema()
                     return user_schema.dump(user) # Return user with last id insert

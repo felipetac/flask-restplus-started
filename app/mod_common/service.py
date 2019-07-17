@@ -97,7 +97,6 @@ class BaseService(ABC):
                 form = cls.Meta.form.from_json(json_obj, obj=obj)
                 if form.validate_on_submit():
                     form.populate_obj(obj)
-                    obj.date_modified = DB.func.current_timestamp()
                     DB.session.commit()
                     schema = cls.Meta.schema()
                     return schema.dump(obj)

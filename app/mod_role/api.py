@@ -25,6 +25,8 @@ class Role(Resource):
     @API.response(201, 'Regra criada', _ROLE)
     @API.response(400, 'Formulário inválido')
     #@API.marshal_with(_ROLE, code=201)
+    @AUTH.role_required
+    @AUDIT.register
     def post(self):
         '''Cria uma nova regra'''
         res = Service.create(API.payload)
@@ -41,6 +43,7 @@ class RoleItem(Resource):
     @API.doc('get_role')
     #@API.marshal_with(_ROLE)
     @API.response(200, 'Regra apresentado', _ROLE)
+    @AUTH.role_required
     @AUDIT.register
     def get(self, _id):
         '''Exibe um regra dado seu identificador'''
@@ -51,6 +54,8 @@ class RoleItem(Resource):
 
     @API.doc('delete_role')
     @API.response(204, 'Regra apagada')
+    @AUTH.role_required
+    @AUDIT.register
     def delete(self, _id):
         '''Apaga um regra dado seu identificador'''
         res = Service.delete(_id)
@@ -62,6 +67,8 @@ class RoleItem(Resource):
     @API.expect(_ROLE)
     @API.response(200, 'Regra atualizada', _ROLE)
     #@API.marshal_with(_ROLE, code=200)
+    @AUTH.role_required
+    @AUDIT.register
     def put(self, _id):
         '''Atualiza um regra dado seu identificador'''
         res = Service.update(_id, API.payload)
@@ -84,9 +91,9 @@ class RolePaginate(Resource):
     '''Lista os regras com paginação'''
     @API.doc('list_roles')
     #@API.marshal_list_with(_ROLE)
-    @UTIL.marshal_paginate
-    @AUTH.role_required
+    @AUTH.required
     @AUDIT.register
+    @UTIL.marshal_paginate
     def get(self, page=None, per_page=None, order_by=None, sort=None):
         '''Lista os regras com paginação'''
         res = Service.list(page, per_page, order_by, sort)
