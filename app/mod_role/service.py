@@ -20,6 +20,5 @@ class Service(BaseService):
 
     @classmethod
     def get_choices(cls):
-        ret = cls.list()
-        roles = ret["data"] if "data" in ret else []
-        return [(r["id"], r["role_name"]) for r in roles]
+        roles = Model.query.all()
+        return [(r.id, r.role_name) for r in roles]

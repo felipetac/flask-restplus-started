@@ -44,6 +44,11 @@ class Service(BaseService):
         return None
 
     @classmethod
+    def get_choices(cls):
+        user = Model.query.all()
+        return [(u.id, u.name) for u in user]
+
+    @classmethod
     def get_by_email(cls, email, serializer=True):
         if email and isinstance(email, str):
             user = Model.query.filter_by(email=email).first()
