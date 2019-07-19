@@ -11,7 +11,7 @@ class Service(BaseService):
         schema = Schema
 
     @classmethod
-    def create(cls, json_obj):
+    def create(cls, json_obj, serializer=True):
         if "id" in json_obj.keys():
             del json_obj["id"]
         form = Form.from_json(json_obj)
@@ -20,8 +20,10 @@ class Service(BaseService):
             auth = cls._populate_obj(form, Model())
             DB.session.add(auth)
             DB.session.commit()
-            schema = Schema()
-            return schema.dump(auth) # Return user with last id insert
+            if serializer:
+                schema = Schema()
+                return schema.dump(auth) # Return user with last id insert
+            return auth
         return {"form": form.errors}
 
     @staticmethod

@@ -13,7 +13,7 @@ class Service(BaseService):
         #sort = "desc" #caso queira mudar
 
     @classmethod
-    def create(cls, json_obj):
+    def create(cls, json_obj, serializer=True):
         if "id" in json_obj.keys():
             del json_obj["id"]
         form = Form.from_json(json_obj)
@@ -22,12 +22,14 @@ class Service(BaseService):
             user = cls._populate_obj(form, Model())
             DB.session.add(user)
             DB.session.commit()
-            user_schema = Schema()
-            return user_schema.dump(user) # Return user with last id insert
+            if serializer:
+                user_schema = Schema()
+                return user_schema.dump(user) # Return user with last id insert
+            return user
         return {"form": form.errors}
 
     @classmethod
-    def update(cls, entity_id, json_obj):
+    def update(cls, entity_id, json_obj, serializer=True):
         if "id" in json_obj.keys():
             del json_obj["id"]
         if entity_id and isinstance(entity_id, int):
@@ -38,8 +40,10 @@ class Service(BaseService):
                 if form.validate_on_submit():
                     user = cls._populate_obj(form, user)
                     DB.session.commit()
-                    user_schema = Schema()
-                    return user_schema.dump(user) # Return user with last id insert
+                    if serializer:
+                        user_schema = Schema()
+                        return user_schema.dump(user) # Return user with last id insert
+                    return user
                 return {"form": form.errors}
         return None
 
