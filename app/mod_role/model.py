@@ -18,6 +18,9 @@ class Model(BaseModel):
     role_name = DB.Column(DB.String(200), nullable=False, unique=True)
     role_desc = DB.Column(DB.String(200), nullable=True)
 
+    __table_args__ = (DB.UniqueConstraint('module_name', 'class_name',
+                                          'method_name', name='_unique_role'),)
+
 class Schema(BaseSchema):
 
     class Meta:

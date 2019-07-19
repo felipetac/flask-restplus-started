@@ -1,29 +1,28 @@
-from abc import ABC #, abstractstaticmethod, abstractclassmethod # Para implementar abstract class
+#from abc import ABC #, abstractstaticmethod, abstractclassmethod # Para implementar abstract class
 import math
-from .util import get_attributes_class
+from .util import Util
 from .model import DB, BaseModel, BaseSchema
 from .form import RestForm, ListForm
 
-class BaseService(ABC):
+class BaseService():
+
+    class Meta:
+        model = BaseModel
+        schema = BaseSchema
+        form = RestForm
+        order_by = "id"
+        sort = "desc"
 
     @classmethod
     def list(cls, page=None, per_page=None, order_by=None, sort=None):
-        if isinstance(cls.Meta.model, BaseModel) or not issubclass(cls.Meta.model, BaseModel):
-            raise Exception("É necessário passar o atributo 'model'" +
-                            "(Objeto SQLAlchemy) na classe inner Meta")
-        if isinstance(cls.Meta.schema, BaseSchema) or not issubclass(cls.Meta.schema, BaseSchema):
-            raise Exception("É necessário passar o atributo 'schema'" +
-                            "(Objeto Marshmallow) na classe inner Meta")
-        if isinstance(cls.Meta.form, RestForm) or not issubclass(cls.Meta.form, RestForm):
-            raise Exception("É necessário passar o atributo 'form'" +
-                            "(Objeto WTForm) na classe inner Meta")
+        cls._validate_instances(["model", "form", "schema"])
         obj = {}
         for attr in ["page", "per_page", "order_by", "sort"]:
             _attr = eval(attr) # pylint: disable=eval-used
             if _attr:
                 obj[attr] = _attr
         form = ListForm.from_json(obj)
-        form.order_by.choices = [(i, i) for i in get_attributes_class(cls.Meta.model)]
+        form.order_by.choices = [(i, i) for i in Util.get_class_attributes(cls.Meta.model)]
         if form.validate():
             page, per_page, order_by, sort = form.page.data, form.per_page.data, \
                                              form.order_by.data, form.sort.data
@@ -49,12 +48,7 @@ class BaseService(ABC):
 
     @classmethod
     def read(cls, entity_id, serializer=True):
-        if isinstance(cls.Meta.model, BaseModel) or not issubclass(cls.Meta.model, BaseModel):
-            raise Exception("É necessário passar o atributo 'model'" +
-                            "(Objeto SQLAlchemy) na classe inner Meta")
-        if isinstance(cls.Meta.schema, BaseSchema) or not issubclass(cls.Meta.schema, BaseSchema):
-            raise Exception("É necessário passar o atributo 'schema'" +
-                            "(Objeto Marshmallow) na classe inner Meta")
+        cls._validate_instances(["model", "schema"])
         if entity_id and isinstance(entity_id, int):
             entity = cls.Meta.model.query.filter_by(id=entity_id).first()
             if entity:
@@ -66,9 +60,7 @@ class BaseService(ABC):
 
     @classmethod
     def delete(cls, entity_id):
-        if not cls.Meta.model or not issubclass(cls.Meta.model, BaseModel):
-            raise Exception("É necessário passar o atributo 'model'" +
-                            "(Objeto SQLAlchemy) na classe inner Meta")
+        cls._validate_instances(["model"])
         if entity_id and isinstance(entity_id, int):
             entity = cls.read(entity_id, serializer=False)
             if entity:
@@ -78,19 +70,23 @@ class BaseService(ABC):
         return None
 
     @classmethod
-    def create(cls, json_obj):
+    def create(cls, json_obj, serializer=True):
+        cls._validate_instances(["model", "form", "schema"])
         form = cls.Meta.form.from_json(json_obj)
         if form.validate():
             model = cls.Meta.model()
             form.populate_obj(model)
             DB.session.add(model)
             DB.session.commit()
-            schema = cls.Meta.schema()
-            return schema.dump(model)
+            if serializer:
+                schema = cls.Meta.schema()
+                return schema.dump(model)
+            return model
         return {"form": form.errors}
 
     @classmethod
-    def update(cls, entity_id, json_obj):
+    def update(cls, entity_id, json_obj, serializer=True):
+        cls._validate_instances(["form", "schema"])
         if entity_id and isinstance(entity_id, int):
             obj = cls.read(entity_id, serializer=False)
             if obj:
@@ -98,14 +94,29 @@ class BaseService(ABC):
                 if form.validate_on_submit():
                     form.populate_obj(obj)
                     DB.session.commit()
-                    schema = cls.Meta.schema()
-                    return schema.dump(obj)
+                    if serializer:
+                        schema = cls.Meta.schema()
+                        return schema.dump(obj)
+                    return obj
                 return {"form": form.errors}
         return None
 
-    class Meta:
-        model = BaseModel
-        schema = BaseSchema
-        form = RestForm
-        order_by = "id"
-        sort = "desc"
+    @classmethod
+    def _validate_instances(cls, instances=None):
+        if instances and isinstance(instances, list):
+            for instance in instances:
+                if instance == "model":
+                    if isinstance(cls.Meta.model, BaseModel) or \
+                       not issubclass(cls.Meta.model, BaseModel):
+                        raise Exception("É necessário passar o atributo 'model'" +
+                                        "(Objeto SQLAlchemy) na classe inner Meta")
+                if instance == "schema":
+                    if isinstance(cls.Meta.schema, BaseSchema) or \
+                       not issubclass(cls.Meta.schema, BaseSchema):
+                        raise Exception("É necessário passar o atributo 'schema'" +
+                                        "(Objeto Marshmallow) na classe inner Meta")
+                if instance == "form":
+                    if isinstance(cls.Meta.form, RestForm) or \
+                       not issubclass(cls.Meta.form, RestForm):
+                        raise Exception("É necessário passar o atributo 'form'" +
+                                        "(Objeto WTForm) na classe inner Meta")

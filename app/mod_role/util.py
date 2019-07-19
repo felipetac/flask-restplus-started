@@ -23,8 +23,7 @@ class Util(object):
 
     def create_all(self):
         with self.app.app_context():
+            Service.truncate()
             for obj in _ROLES_REGISTRY:
-                if not Service.read_by_attrs(obj["module_name"],
-                                             obj["class_name"],
-                                             obj["method_name"]):
-                    Service.create(obj)
+
+                Service.create(obj)

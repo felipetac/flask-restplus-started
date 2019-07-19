@@ -15,7 +15,6 @@ class Service(BaseService):
         if "id" in json_obj.keys():
             del json_obj["id"]
         form = Form.from_json(json_obj)
-        print(form.user_id.data, form.method_name.data)
         form.user_id.choices = UserService.get_choices()
         if form.validate():
             auth = cls._populate_obj(form, Model())

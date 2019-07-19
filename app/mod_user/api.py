@@ -5,7 +5,7 @@ from app.mod_audit.util import Util as AUDIT
 from app.mod_auth.util import Util as AUTH
 from .service import Service
 
-API = Namespace('users', description='Operações da entidade Usuário')
+API = Namespace('users', description='Operações do Usuário')
 
 _USER = API.model('User', {
     'id': fields.Integer(readOnly=True, description='Identificador único do usuário'),

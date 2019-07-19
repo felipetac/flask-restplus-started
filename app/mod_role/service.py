@@ -1,4 +1,5 @@
 from app.mod_common.service import DB, BaseService
+from app.mod_service.util import Util as SERVICE
 from .model import Model, Schema
 from .form import Form
 
@@ -11,6 +12,37 @@ class Service(BaseService):
         #order_by = "id" #caso queira mudar
         #sort = "desc" #caso queira mudar
 
+    @classmethod
+    @SERVICE.compose
+    def list(cls, page=None, per_page=None, order_by=None, sort=None):
+        return super().list(page, per_page, order_by, sort)
+
+    @classmethod
+    @SERVICE.compose
+    def read(cls, entity_id, serializer=True):
+        return super().read(entity_id, serializer)
+
+    @classmethod
+    @SERVICE.compose
+    def delete(cls, entity_id):
+        return super().delete(entity_id)
+
+    @classmethod
+    @SERVICE.compose
+    def create(cls, json_obj, serializer=True):
+        return super().create(json_obj, serializer)
+
+    @classmethod
+    @SERVICE.compose
+    def update(cls, entity_id, json_obj, serializer=True):
+        return super().update(entity_id, json_obj, serializer)
+
+    @classmethod
+    @SERVICE.compose
+    def get_choices(cls):
+        roles = Model.query.all()
+        return [(r.id, r.role_name) for r in roles]
+
     @staticmethod
     def read_by_attrs(module_name, class_name, method_name):
         res = DB.session.query(Model).filter(Model.module_name == module_name,
@@ -18,7 +50,6 @@ class Service(BaseService):
                                              Model.method_name == method_name).first()
         return res
 
-    @classmethod
-    def get_choices(cls):
-        roles = Model.query.all()
-        return [(r.id, r.role_name) for r in roles]
+    @staticmethod
+    def truncate():
+        Model.query.delete()
