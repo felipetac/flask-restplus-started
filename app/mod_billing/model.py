@@ -26,6 +26,7 @@ class Model(BaseModel):
     called_services = DB.relationship(ServiceModel, secondary=SERVICES,
                                       backref=DB.backref('bills'),
                                       nullable=True)
+    complexity_level = DB.Column(DB.Integer, nullable=True)
     cost = DB.Column(DB.Numeric, default=0.0)
 
 class Schema(BaseSchema):

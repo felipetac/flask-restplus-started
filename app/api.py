@@ -6,6 +6,7 @@ from app.mod_user.api import API as UserNS
 from app.mod_role.api import API as RoleNS
 from app.mod_auth.api import API as AuthNS
 from app.mod_audit.api import API as AuditNS
+from app.mod_contract.api import API as ContractNS
 # pylint: enable=wrong-import-position
 
 BLUEPRINT = Blueprint('user_api', __name__, url_prefix='/api/1')
@@ -20,3 +21,4 @@ API.add_namespace(UserNS)
 API.add_namespace(RoleNS)
 API.add_namespace(AuthNS)
 API.add_namespace(AuditNS)
+API.add_namespace(ContractNS)

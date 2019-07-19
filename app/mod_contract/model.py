@@ -15,6 +15,8 @@ class Model(BaseModel):
 
     company_name = DB.Column(DB.String(200), nullable=False)
     company_cnpj = DB.Column(DB.String(50), nullable=False)
+    status = DB.Column(DB.String(100), nullable=False, default="ativo", index=True)
+    base_price = DB.Column(DB.Float, nullable=True)
     users = DB.relationship(User, secondary=USERS,
                             backref=DB.backref('company'))
 
@@ -23,4 +25,4 @@ class Schema(BaseSchema):
     class Meta:
         model = Model
 
-    users = fields.Nested(UserSchema, many=True)
+    users = fields.Nested(UserSchema, many=True, only=["id", "name", "email"])
