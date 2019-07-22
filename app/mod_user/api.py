@@ -3,15 +3,17 @@ from app.mod_common.util import Util as UTIL
 from app.mod_role.util import Util as ROLE
 from app.mod_audit.util import Util as AUDIT
 from app.mod_auth.util import Util as AUTH
+from app.mod_auth.api import AUTHORIZATIONS
 from .service import Service
 
-API = Namespace('users', description='Operações do Usuário')
+API = Namespace('users', description='Operações do Usuário', authorizations=AUTHORIZATIONS)
 
 _USER = API.model('User', {
-    'id': fields.Integer(readOnly=True, description='Identificador único do usuário'),
-    'name': fields.String(required=True, description='Nome do usuário'),
-    'email': fields.String(required=True, description='E-mail do usuário'),
-    'password': fields.String(required=True, description='Senha do usuário'),
+    'name': fields.String(required=True, description='Nome do usuário', 
+                          example="Felipe Toscano"),
+    'email': fields.String(required=True, description='E-mail do usuário', 
+                           example="felipe.toscano@gmail.com"),
+    'password': fields.String(required=True, description='Senha do usuário', example="123456"),
     'roles_id': fields.List(fields.Integer(required=False, description='Lista de ids das regras'))
 })
 
@@ -20,11 +22,12 @@ _USER = API.model('User', {
 class User(Resource):
     '''Cria um novo usuario'''
     @API.doc('create_user')
+    @API.doc(security='jwt')
     @API.expect(_USER)
     @API.response(201, 'Usuário criado', _USER)
     @API.response(400, 'Formulário inválido')
     #@API.marshal_with(_USER, code=201)
-    @AUTH.role_required
+    #@AUTH.role_required
     @AUDIT.register
     def post(self):
         '''Cria um novo usuário'''
@@ -40,6 +43,7 @@ class User(Resource):
 class UserItem(Resource):
     '''Exibe um usuário e permite a manipulação do mesmo'''
     @API.doc('get_user')
+    @API.doc(security='jwt')
     #@API.marshal_with(_USER)
     @API.response(200, 'Usuário apresentado', _USER)
     @AUTH.role_required
@@ -52,6 +56,7 @@ class UserItem(Resource):
         return res
 
     @API.doc('delete_user')
+    @API.doc(security='jwt')
     @API.response(204, 'Usuário apagado')
     @AUTH.role_required
     @AUDIT.register
@@ -63,6 +68,7 @@ class UserItem(Resource):
         return "Usuário apagado com sucesso!", 204
 
     @API.doc('update_user')
+    @API.doc(security='jwt')
     @API.expect(_USER)
     @API.response(200, 'Usuário atualizado', _USER)
     #@API.marshal_with(_USER, code=200)
@@ -89,6 +95,7 @@ class UserItem(Resource):
 class UserPaginate(Resource):
     '''Lista os usuários com paginação'''
     @API.doc('list_users')
+    @API.doc(security='jwt')
     #@API.marshal_list_with(_USER)
     @AUTH.required
     @AUDIT.register

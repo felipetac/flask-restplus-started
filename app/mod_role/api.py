@@ -1,15 +1,15 @@
 from flask_restplus import Namespace, Resource, fields
 from app.mod_common.util import Util as UTIL
 from app.mod_auth.util import Util as AUTH
+from app.mod_auth.api import AUTHORIZATIONS
 from app.mod_audit.util import Util as AUDIT
 from app.mod_billing.util import Util as BILL
 from .service import Service
 from .util import Util as ROLE
 
-API = Namespace('roles', description='Operações da Regra')
+API = Namespace('roles', description='Operações da Regra', authorizations=AUTHORIZATIONS)
 
 _ROLE = API.model('Role', {
-    'id': fields.Integer(readOnly=True, description='Identificador único do regra'),
     'module_name': fields.String(required=True, description='Nome do modulo'),
     'class_name': fields.String(required=True, description='Nome da Classe'),
     'method_name': fields.String(required=True, description='Nome do Método'),
@@ -22,6 +22,7 @@ _ROLE = API.model('Role', {
 class Role(Resource):
     '''Cria uma nova regra'''
     @API.doc('create_role')
+    @API.doc(security='jwt')
     @API.expect(_ROLE)
     @API.response(201, 'Regra criada', _ROLE)
     @API.response(400, 'Formulário inválido')
@@ -42,6 +43,7 @@ class Role(Resource):
 class RoleItem(Resource):
     '''Exibe um regra e permite a manipulação do mesmo'''
     @API.doc('get_role')
+    @API.doc(security='jwt')
     #@API.marshal_with(_ROLE)
     @API.response(200, 'Regra apresentado', _ROLE)
     @AUTH.role_required
@@ -54,6 +56,7 @@ class RoleItem(Resource):
         return res
 
     @API.doc('delete_role')
+    @API.doc(security='jwt')
     @API.response(204, 'Regra apagada')
     @AUTH.role_required
     @AUDIT.register
@@ -65,6 +68,7 @@ class RoleItem(Resource):
         return "Regra apagada com sucesso!", 204
 
     @API.doc('update_role')
+    @API.doc(security='jwt')
     @API.expect(_ROLE)
     @API.response(200, 'Regra atualizada', _ROLE)
     #@API.marshal_with(_ROLE, code=200)
@@ -91,8 +95,9 @@ class RoleItem(Resource):
 class RolePaginate(Resource):
     '''Lista os regras com paginação'''
     @API.doc('list_roles')
+    @API.doc(security='jwt')
     #@API.marshal_list_with(_ROLE)
-    @AUTH.required
+    @AUTH.role_required
     @UTIL.marshal_paginate
     @BILL.get_price
     @AUDIT.register

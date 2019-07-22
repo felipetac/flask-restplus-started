@@ -3,12 +3,12 @@ from app.mod_common.util import Util as UTIL
 from app.mod_role.util import Util as ROLE
 from app.mod_audit.util import Util as AUDIT
 from app.mod_auth.util import Util as AUTH
+from app.mod_auth.api import AUTHORIZATIONS
 from .service import Service
 
-API = Namespace('contracts', description='Operações do Contrato')
+API = Namespace('contracts', description='Operações do Contrato', authorizations=AUTHORIZATIONS)
 
 _CONTRACT = API.model('Contract', {
-    'id': fields.Integer(readOnly=True, description='Identificador único do contrato'),
     'company_name': fields.String(required=True, description='Nome do contrato'),
     'company_cnpj': fields.String(required=True, description='CNPJ do contrato'),
     'status': fields.String(required=True, description='Estado do contrato'),
@@ -21,6 +21,7 @@ _CONTRACT = API.model('Contract', {
 class Contract(Resource):
     '''Cria um novo usuario'''
     @API.doc('create_contract')
+    @API.doc(security='jwt')
     @API.expect(_CONTRACT)
     @API.response(201, 'Contrato criado', _CONTRACT)
     @API.response(400, 'Formulário inválido')
@@ -41,6 +42,7 @@ class Contract(Resource):
 class ContractItem(Resource):
     '''Exibe um contrato e permite a manipulação do mesmo'''
     @API.doc('get_contract')
+    @API.doc(security='jwt')
     #@API.marshal_with(_CONTRACT)
     @API.response(200, 'Contrato apresentado', _CONTRACT)
     @AUTH.role_required
@@ -53,6 +55,7 @@ class ContractItem(Resource):
         return res
 
     @API.doc('delete_contract')
+    @API.doc(security='jwt')
     @API.response(204, 'Contrato apagado')
     @AUTH.role_required
     @AUDIT.register
@@ -64,6 +67,7 @@ class ContractItem(Resource):
         return "Contrato apagado com sucesso!", 204
 
     @API.doc('update_contract')
+    @API.doc(security='jwt')
     @API.expect(_CONTRACT)
     @API.response(200, 'Contrato atualizado', _CONTRACT)
     #@API.marshal_with(_CONTRACT, code=200)
@@ -90,6 +94,7 @@ class ContractItem(Resource):
 class ContractPaginate(Resource):
     '''Lista os contratos com paginação'''
     @API.doc('list_contracts')
+    @API.doc(security='jwt')
     #@API.marshal_list_with(_CONTRACT)
     @AUTH.required
     @AUDIT.register

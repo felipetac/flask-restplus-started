@@ -1,11 +1,12 @@
 from flask_restplus import Namespace, Resource
 from app.mod_common.util import Util as UTIL
 from app.mod_auth.util import Util as AUTH
+from app.mod_auth.api import AUTHORIZATIONS
 from app.mod_audit.util import Util as AUDIT
-from .service.service import Service
-from .util import Util as ROLE
+from app.mod_role.util import Util as ROLE
+from .service import Service
 
-API = Namespace('billing', description='Operações da Bilhetagem')
+API = Namespace('billing', description='Operações da Bilhetagem', authorizations=AUTHORIZATIONS)
 
 @ROLE.register
 @API.route('/service/page/<int:page>',
@@ -21,6 +22,7 @@ API = Namespace('billing', description='Operações da Bilhetagem')
 class ServicePaginate(Resource):
     '''Lista os serviços com paginação'''
     @API.doc('list_services')
+    @API.doc(security='jwt')
     #@API.marshal_list_with(_ROLE)
     @AUTH.role_required
     @UTIL.marshal_paginate
