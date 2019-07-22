@@ -7,6 +7,6 @@ class Form(RestForm):
 
     class Meta:
         model = Model
-        #field_args = {'role_name': {'filters': [to_lower]}}
 
-    users_id = SelectMultipleField('Users Ids', validators=[Optional()], coerce=int)
+    users_id = SelectMultipleField('Users Ids', validators=[Optional()],
+                                   coerce=int)

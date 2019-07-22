@@ -10,8 +10,8 @@ API = Namespace('contracts', description='Operações do Contrato')
 _CONTRACT = API.model('Contract', {
     'id': fields.Integer(readOnly=True, description='Identificador único do contrato'),
     'company_name': fields.String(required=True, description='Nome do contrato'),
-    'company_cnpj': fields.String(required=True, description='E-mail do contrato'),
-    'status': fields.String(required=True, description='Senha do contrato'),
+    'company_cnpj': fields.String(required=True, description='CNPJ do contrato'),
+    'status': fields.String(required=True, description='Estado do contrato'),
     'base_price': fields.Float(description='Valor base da requisição'),
     'users_id': fields.List(fields.Integer(required=False, description='Lista de ids dos usuários'))
 })
