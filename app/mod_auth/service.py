@@ -1,5 +1,6 @@
-from flask import current_app
+import datetime
 import jwt
+from flask import current_app
 from app.mod_user.service import Service as UserService
 from app.mod_role.service import Service as RoleService
 from app.mod_auth.form import LoginForm
@@ -12,7 +13,10 @@ class Service:
         if form.validate_on_submit():
             user = UserService.get_by_email(form.email.data, serializer=False)
             if user and user.password == form.password.data:
-                payloads = {"user": user.name, "email": user.email}
+                delta_sec = current_app.config["JWT_EXPIRATION_SECONDS"] or 420
+                payloads = {"user": user.name, "email": user.email,
+                            "exp": (datetime.datetime.utcnow() +
+                                    datetime.timedelta(seconds=delta_sec))}
                 encoded_jwt = jwt.encode(payloads, current_app.config["SECRET_KEY"],
                                          current_app.config["JWT_ALGORITHM"])
                 return {"data": {"key": encoded_jwt.decode("utf-8")}}
@@ -22,12 +26,17 @@ class Service:
     @staticmethod
     def is_member(key):
         if key:
-            payloads = jwt.decode(key.replace("Bearer ", ""),
-                                  current_app.config["SECRET_KEY"],
-                                  current_app.config["JWT_ALGORITHM"])
-            user = UserService.get_by_email(payloads["email"], serializer=False)
-            if user:
-                return user
+            try:
+                payloads = jwt.decode(key.replace("Bearer ", ""),
+                                      current_app.config["SECRET_KEY"],
+                                      current_app.config["JWT_ALGORITHM"])
+                user = UserService.get_by_email(payloads["email"], serializer=False)
+                if user:
+                    return user
+            except jwt.ExpiredSignatureError:
+                return "Token está expirado!"
+            except jwt.DecodeError:
+                return "Token Inválido!"
             return "Token inválido!"
         return "Token é requerido para esta requisição!"
 
