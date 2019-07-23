@@ -5,14 +5,13 @@ from app.mod_contract.model import Model as Contract, Schema as ContractSchema
 from app.mod_service.model import Model as ServiceModel, Schema as ServiceSchema
 
 BILL_SERVICE = DB.Table('app_bill_service', BaseModel.metadata,
-                    DB.Column('id', DB.Integer, primary_key=True),
-                    DB.Column('date_created', DB.DateTime,
-                              default=DB.func.current_timestamp(), index=True),
-                    DB.Column('bill_id', DB.Integer,
-                              DB.ForeignKey('app_bill.id', ondelete="CASCADE"), index=True),
-                    DB.Column('service_id', DB.Integer,
-                              DB.ForeignKey('app_service.id', ondelete="CASCADE"))
-                   )
+                        DB.Column('id', DB.Integer, primary_key=True),
+                        DB.Column('date_created', DB.DateTime,
+                                  default=DB.func.current_timestamp(), index=True),
+                        DB.Column('bill_id', DB.Integer,
+                                  DB.ForeignKey('app_bill.id', ondelete="CASCADE"), index=True),
+                        DB.Column('service_id', DB.Integer,
+                                  DB.ForeignKey('app_service.id', ondelete="CASCADE")))
 
 class Model(BaseModel):
 

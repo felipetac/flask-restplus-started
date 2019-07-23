@@ -3,11 +3,12 @@ from app.mod_common.model import DB, BaseModel, BaseSchema
 from app.mod_user.model import Model as User, Schema as UserSchema
 
 CONTRACT_USER = DB.Table('app_contract_user', BaseModel.metadata,
-                 DB.Column('contract_id', DB.Integer,
-                           DB.ForeignKey('app_contract.id', ondelete="CASCADE"), primary_key=True),
-                 DB.Column('user_id', DB.Integer,
-                           DB.ForeignKey('app_user.id', ondelete="CASCADE"), primary_key=True, unique=True)
-                )
+                         DB.Column('contract_id', DB.Integer,
+                                   DB.ForeignKey('app_contract.id', ondelete="CASCADE"),
+                                   primary_key=True),
+                         DB.Column('user_id', DB.Integer,
+                                   DB.ForeignKey('app_user.id', ondelete="CASCADE"),
+                                   primary_key=True, unique=True))
 
 class Model(BaseModel):
 
