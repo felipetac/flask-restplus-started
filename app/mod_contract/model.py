@@ -4,9 +4,9 @@ from app.mod_user.model import Model as User, Schema as UserSchema
 
 USERS = DB.Table('app_contract_user', BaseModel.metadata,
                  DB.Column('contract_id', DB.Integer,
-                           DB.ForeignKey('app_contract.id'), primary_key=True),
+                           DB.ForeignKey('app_contract.id', ondelete="CASCADE"), primary_key=True),
                  DB.Column('user_id', DB.Integer,
-                           DB.ForeignKey('app_user.id'), primary_key=True, unique=True)
+                           DB.ForeignKey('app_user.id', ondelete="CASCADE"), primary_key=True, unique=True)
                 )
 
 class Model(BaseModel):

@@ -9,9 +9,9 @@ SERVICES = DB.Table('app_bill_service', BaseModel.metadata,
                     DB.Column('date_created', DB.DateTime, 
                               default=DB.func.current_timestamp(), index=True),
                     DB.Column('bill_id', DB.Integer,
-                              DB.ForeignKey('app_bill.id'), index=True),
+                              DB.ForeignKey('app_bill.id', ondelete="CASCADE"), index=True),
                     DB.Column('service_id', DB.Integer,
-                              DB.ForeignKey('app_service.id'))
+                              DB.ForeignKey('app_service.id', ondelete="CASCADE"))
                    )
 
 class Model(BaseModel):
@@ -24,12 +24,12 @@ class Model(BaseModel):
     base_url = DB.Column(DB.String(500), nullable=False)
     contract_id = DB.Column(DB.Integer, DB.ForeignKey('app_contract.id'),
                             nullable=True, index=True)
-    contract = DB.relationship(Contract)
+    contract = DB.relationship(Contract, cascade="all")
     user_id = DB.Column(DB.Integer, DB.ForeignKey('app_user.id'),
                         nullable=True, index=True)
-    user = DB.relationship(User)
+    user = DB.relationship(User, cascade="all")
     called_services = DB.relationship(ServiceModel, secondary=SERVICES,
-                                      backref=DB.backref('bills'))
+                                      backref=DB.backref('bills'), cascade="all")
     complexity_level = DB.Column(DB.Integer, nullable=True)
     cost = DB.Column(DB.Numeric, default=0.0)
 

@@ -16,7 +16,7 @@ class Model(BaseModel):
     ), nullable=False)
     active = DB.Column(DB.Boolean, nullable=False, default=True)
     roles = DB.relationship(Role, secondary=ROLES,
-                            backref=DB.backref('users'))
+                            backref=DB.backref('users'), cascade="all")
 
 class Schema(BaseSchema):
 

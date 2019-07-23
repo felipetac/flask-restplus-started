@@ -12,7 +12,7 @@ class Model(BaseModel):
     base_url = DB.Column(DB.String(200), nullable=False)
     user_id = DB.Column(DB.Integer, DB.ForeignKey('app_user.id'),
                         nullable=True, index=True)
-    user = DB.relationship(User)
+    user = DB.relationship(User, cascade="all")
 
     __table_args__ = (DB.Index("ix_app_audit_service", module_name, class_name, method_name),)
 
