@@ -6,7 +6,7 @@ from app.mod_audit.util import Util as AUDIT
 from app.mod_role.util import Util as ROLE
 from .service import Service
 
-API = Namespace('billing', description='Operações da Bilhetagem', authorizations=AUTHORIZATIONS)
+API = Namespace('billing', description='Operações de Bilhetagem', authorizations=AUTHORIZATIONS)
 
 @ROLE.register
 @API.route('/service/page/<int:page>',

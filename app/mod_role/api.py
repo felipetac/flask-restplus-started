@@ -1,4 +1,4 @@
-from flask_restplus import Namespace, Resource, fields
+from flask_restplus import Namespace, Resource
 from app.mod_common.util import Util as UTIL
 from app.mod_auth.util import Util as AUTH
 from app.mod_auth.api import AUTHORIZATIONS
@@ -8,78 +8,6 @@ from .service import Service
 from .util import Util as ROLE
 
 API = Namespace('roles', description='Operações da Regra', authorizations=AUTHORIZATIONS)
-
-_ROLE = API.model('Role', {
-    'module_name': fields.String(required=True, description='Nome do modulo'),
-    'class_name': fields.String(required=True, description='Nome da Classe'),
-    'method_name': fields.String(required=True, description='Nome do Método'),
-    'role_name': fields.String(required=True, description='Nome da regra'),
-    'role_desc': fields.String(required=True, description='Descrição da Regra')
-})
-
-@ROLE.register
-@API.route('/')
-class Role(Resource):
-    '''Cria uma nova regra'''
-    @API.doc('create_role')
-    @API.doc(security='jwt')
-    @API.expect(_ROLE)
-    @API.response(201, 'Regra criada', _ROLE)
-    @API.response(400, 'Formulário inválido')
-    #@API.marshal_with(_ROLE, code=201)
-    @AUTH.role_required
-    @AUDIT.register
-    def post(self):
-        '''Cria uma nova regra'''
-        res = Service.create(API.payload)
-        if "form" in res.keys():
-            API.abort(400, "Formulário inválido", status=res["form"], statusCode="400")
-        return res, 201
-
-@ROLE.register
-@API.route('/<int:_id>')
-@API.response(404, 'Regra não encontrado')
-@API.param('_id', 'Identificador do regra')
-class RoleItem(Resource):
-    '''Exibe um regra e permite a manipulação do mesmo'''
-    @API.doc('get_role')
-    @API.doc(security='jwt')
-    #@API.marshal_with(_ROLE)
-    @API.response(200, 'Regra apresentado', _ROLE)
-    @AUTH.role_required
-    @AUDIT.register
-    def get(self, _id):
-        '''Exibe um regra dado seu identificador'''
-        res = Service.read(_id)
-        if not res:
-            API.abort(400, "Regra não encontrado", status={"id": _id}, statusCode="404")
-        return res
-
-    @API.doc('delete_role')
-    @API.doc(security='jwt')
-    @API.response(204, 'Regra apagada')
-    @AUTH.role_required
-    @AUDIT.register
-    def delete(self, _id):
-        '''Apaga um regra dado seu identificador'''
-        res = Service.delete(_id)
-        if not res:
-            API.abort(400, "Regra não encontrado", status={"id": _id}, statusCode="404")
-        return "Regra apagada com sucesso!", 204
-
-    @API.doc('update_role')
-    @API.doc(security='jwt')
-    @API.expect(_ROLE)
-    @API.response(200, 'Regra atualizada', _ROLE)
-    #@API.marshal_with(_ROLE, code=200)
-    @AUTH.role_required
-    @AUDIT.register
-    def put(self, _id):
-        '''Atualiza um regra dado seu identificador'''
-        res = Service.update(_id, API.payload)
-        if not res:
-            API.abort(400, "Regra não encontrado", status={"id": _id}, statusCode="404")
-        return res
 
 @ROLE.register
 @API.route('/page/<int:page>',

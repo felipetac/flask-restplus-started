@@ -9,11 +9,13 @@ from .service import Service
 API = Namespace('users', description='Operações do Usuário', authorizations=AUTHORIZATIONS)
 
 _USER = API.model('User', {
-    'name': fields.String(required=True, description='Nome do usuário', 
+    'name': fields.String(required=True, description='Nome do usuário',
                           example="Felipe Toscano"),
-    'email': fields.String(required=True, description='E-mail do usuário', 
+    'email': fields.String(required=True, description='E-mail do usuário',
                            example="felipe.toscano@gmail.com"),
     'password': fields.String(required=True, description='Senha do usuário', example="123456"),
+    'active': fields.Boolean(required=True, description='Usuario Ativo',
+                             example=True),
     'roles_id': fields.List(fields.Integer(required=False, description='Lista de ids das regras'))
 })
 
@@ -22,7 +24,7 @@ _USER = API.model('User', {
 class User(Resource):
     '''Cria um novo usuario'''
     @API.doc('create_user')
-    @API.doc(security='jwt')
+    #@API.doc(security='jwt')
     @API.expect(_USER)
     @API.response(201, 'Usuário criado', _USER)
     @API.response(400, 'Formulário inválido')

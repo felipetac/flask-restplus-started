@@ -8,8 +8,8 @@ class Model(BaseModel):
     class_name = DB.Column(DB.String(200), nullable=False)
     method_name = DB.Column(DB.String(200), nullable=False)
 
-    __table_args__ = (DB.UniqueConstraint('module_name', 'class_name',
-                                          'method_name', name='_unique_service'),)
+    __table_args__ = (DB.Index("ix_app_service", "module_name", "class_name",
+                               "method_name", unique=True),)
 
 class Schema(BaseSchema):
 

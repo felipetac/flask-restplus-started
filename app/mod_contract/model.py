@@ -15,7 +15,7 @@ class Model(BaseModel):
 
     company_name = DB.Column(DB.String(200), nullable=False)
     company_cnpj = DB.Column(DB.String(50), nullable=False, unique=True, index=True)
-    status = DB.Column(DB.String(100), nullable=False, default="ativo", index=True)
+    active = DB.Column(DB.Boolean, nullable=False, default=True)
     base_price = DB.Column(DB.Float, nullable=True)
     users = DB.relationship(User, secondary=USERS,
                             backref=DB.backref('company'))

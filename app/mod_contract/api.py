@@ -9,10 +9,12 @@ from .service import Service
 API = Namespace('contracts', description='Operações do Contrato', authorizations=AUTHORIZATIONS)
 
 _CONTRACT = API.model('Contract', {
-    'company_name': fields.String(required=True, description='Nome do contrato'),
-    'company_cnpj': fields.String(required=True, description='CNPJ do contrato'),
-    'status': fields.String(required=True, description='Estado do contrato'),
-    'base_price': fields.Float(description='Valor base da requisição'),
+    'company_name': fields.String(required=True, description='Nome do contrato', 
+                                  example="Empresa XPTO"),
+    'company_cnpj': fields.String(required=True, description='CNPJ do contrato', 
+                                  example="97.953.939/0001-02"),
+    'actve': fields.Boolean(required=True, description='Contrato ativo', example=True),
+    'base_price': fields.Float(description='Valor base da requisição', example=0.02345),
     'users_id': fields.List(fields.Integer(required=False, description='Lista de ids dos usuários'))
 })
 

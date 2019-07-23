@@ -6,7 +6,8 @@ from app.mod_service.model import Model as ServiceModel, Schema as ServiceSchema
 
 SERVICES = DB.Table('app_bill_service', BaseModel.metadata,
                     DB.Column('id', DB.Integer, primary_key=True),
-                    DB.Column('date_created', DB.DateTime, default=DB.func.current_timestamp(), index=True),
+                    DB.Column('date_created', DB.DateTime, 
+                              default=DB.func.current_timestamp(), index=True),
                     DB.Column('bill_id', DB.Integer,
                               DB.ForeignKey('app_bill.id'), index=True),
                     DB.Column('service_id', DB.Integer,
@@ -22,15 +23,17 @@ class Model(BaseModel):
     method_name = DB.Column(DB.String(200), nullable=False)
     base_url = DB.Column(DB.String(500), nullable=False)
     contract_id = DB.Column(DB.Integer, DB.ForeignKey('app_contract.id'),
-                            nullable=True)
+                            nullable=True, index=True)
     contract = DB.relationship(Contract)
     user_id = DB.Column(DB.Integer, DB.ForeignKey('app_user.id'),
-                        nullable=True)
+                        nullable=True, index=True)
     user = DB.relationship(User)
     called_services = DB.relationship(ServiceModel, secondary=SERVICES,
                                       backref=DB.backref('bills'))
     complexity_level = DB.Column(DB.Integer, nullable=True)
     cost = DB.Column(DB.Numeric, default=0.0)
+
+    __table_args__ = (DB.Index("ix_app_bill_service", "module_name", "class_name", "method_name"),)
 
 class Schema(BaseSchema):
 
