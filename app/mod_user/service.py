@@ -47,16 +47,13 @@ class Service(BaseService):
     @staticmethod
     def _json_obj(json_obj): # Fix por causa do exemplo gerado pelo swagger
         keys = json_obj.keys()
-        if "id" in keys:
-            del json_obj["id"]
         if "roles_id" in keys and json_obj["roles_id"] == [0]:
             del json_obj["roles_id"]
         return json_obj
 
     @classmethod
     def get_choices(cls):
-        user = Model.query.all()
-        return [(u.id, u.name) for u in user]
+        return Model.query.with_entities(Model.id, Model.name).all()
 
     @classmethod
     def get_by_email(cls, email, serializer=True):

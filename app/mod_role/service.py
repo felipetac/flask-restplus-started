@@ -40,8 +40,7 @@ class Service(BaseService):
     @classmethod
     @SERVICE.compose
     def get_choices(cls):
-        roles = Model.query.all()
-        return [(r.id, r.role_name) for r in roles]
+        return Model.query.with_entities(Model.id, Model.role_name).all()
 
     @staticmethod
     def read_by_attrs(module_name, class_name, method_name):

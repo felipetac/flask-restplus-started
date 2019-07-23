@@ -10,7 +10,7 @@ class Model(BaseModel):
     class_name = DB.Column(DB.String(200), nullable=False)
     method_name = DB.Column(DB.String(200), nullable=False)
     base_url = DB.Column(DB.String(200), nullable=False)
-    user_id = DB.Column(DB.Integer, DB.ForeignKey('app_user.id'),
+    user_id = DB.Column(DB.Integer, DB.ForeignKey('app_user.id', ondelete="CASCADE"),
                         nullable=True, index=True)
     user = DB.relationship(User, cascade="all")
 

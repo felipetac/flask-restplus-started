@@ -1,6 +1,6 @@
 from app.mod_common.service import BaseService
 from app.mod_user.service import Service as UserService
-from .model import DB, Model, Schema
+from .model import DB, Model, Schema, CONTRACT_USER
 from .form import Form
 
 class Service(BaseService):
@@ -12,9 +12,7 @@ class Service(BaseService):
 
     @classmethod
     def create(cls, json_obj, serializer=True):
-        if "id" in json_obj.keys():
-            del json_obj["id"]
-        form = Form.from_json(json_obj)
+        form = Form.from_json(cls._json_obj(json_obj))
         form.users_id.choices = cls._get_users()
         if form.validate_on_submit():
             entity = cls._populate_obj(form, Model())
@@ -28,12 +26,10 @@ class Service(BaseService):
 
     @classmethod
     def update(cls, entity_id, json_obj, serializer=True):
-        if "id" in json_obj.keys():
-            del json_obj["id"]
         if entity_id and isinstance(entity_id, int):
             entity = cls.read(entity_id, serializer=False)
             if entity:
-                form = Form.from_json(json_obj, obj=entity) # obj to raising a ValidationError
+                form = Form.from_json(cls._json_obj(json_obj), obj=entity) # obj to raising a ValidationError
                 form.users_id.choices = cls._get_users()
                 if form.validate_on_submit():
                     entity = cls._populate_obj(form, entity)
@@ -49,15 +45,23 @@ class Service(BaseService):
     def _get_users(cls):
         choices = []
         user_choices = UserService.get_choices()
+        contracts_users_ids = DB.session.query(CONTRACT_USER)\
+                                        .with_entities(CONTRACT_USER.c.user_id).all()
+        contracts_users_ids = [u[0] for u in contracts_users_ids]
         users_ids = [u[0] for u in user_choices]
-        contracts = Model.query.all()
-        contract_users_id = [u.id for u in contracts]
-        choices_ids = set(users_ids) - set(contract_users_id)
+        choices_ids = set(users_ids) - set(contracts_users_ids)
         for _id in choices_ids:
             for tpl in user_choices:
                 if _id == tpl[0]:
                     choices.append(tpl)
         return choices
+
+    @staticmethod
+    def _json_obj(json_obj): # Fix por causa do exemplo gerado pelo swagger
+        keys = json_obj.keys()
+        if "users_id" in keys and json_obj["users_id"] == [0]:
+            del json_obj["users_id"]
+        return json_obj
 
     @staticmethod
     def _change_error_msg(dic):

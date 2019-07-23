@@ -4,9 +4,9 @@ from app.mod_user.model import Model as User, Schema as UserSchema
 from app.mod_contract.model import Model as Contract, Schema as ContractSchema
 from app.mod_service.model import Model as ServiceModel, Schema as ServiceSchema
 
-SERVICES = DB.Table('app_bill_service', BaseModel.metadata,
+BILL_SERVICE = DB.Table('app_bill_service', BaseModel.metadata,
                     DB.Column('id', DB.Integer, primary_key=True),
-                    DB.Column('date_created', DB.DateTime, 
+                    DB.Column('date_created', DB.DateTime,
                               default=DB.func.current_timestamp(), index=True),
                     DB.Column('bill_id', DB.Integer,
                               DB.ForeignKey('app_bill.id', ondelete="CASCADE"), index=True),
@@ -28,7 +28,7 @@ class Model(BaseModel):
     user_id = DB.Column(DB.Integer, DB.ForeignKey('app_user.id'),
                         nullable=True, index=True)
     user = DB.relationship(User, cascade="all")
-    called_services = DB.relationship(ServiceModel, secondary=SERVICES,
+    called_services = DB.relationship(ServiceModel, secondary=BILL_SERVICE,
                                       backref=DB.backref('bills'), cascade="all")
     complexity_level = DB.Column(DB.Integer, nullable=True)
     cost = DB.Column(DB.Numeric, default=0.0)

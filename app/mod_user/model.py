@@ -3,7 +3,7 @@ from sqlalchemy_utils import PasswordType, EmailType
 from marshmallow import fields
 from app import PS
 from app.mod_common.model import DB, BaseModel, BaseSchema
-from app.mod_role.model import ROLES, Model as Role, Schema as RoleSchema
+from app.mod_role.model import USER_ROLE, Model as Role, Schema as RoleSchema
 
 class Model(BaseModel):
 
@@ -15,7 +15,7 @@ class Model(BaseModel):
         onload=lambda **kwargs: dict(schemes=PS, **kwargs) # pylint: disable=unnecessary-lambda
     ), nullable=False)
     active = DB.Column(DB.Boolean, nullable=False, default=True)
-    roles = DB.relationship(Role, secondary=ROLES,
+    roles = DB.relationship(Role, secondary=USER_ROLE,
                             backref=DB.backref('users'), cascade="all")
 
 class Schema(BaseSchema):
