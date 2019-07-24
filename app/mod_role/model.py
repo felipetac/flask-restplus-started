@@ -1,14 +1,6 @@
 # Hash password Automagic
 from app.mod_common.model import DB, BaseModel, BaseSchema
 
-USER_ROLE = DB.Table('app_user_role', BaseModel.metadata,
-                 DB.Column('role_id', DB.Integer,
-                           DB.ForeignKey('app_role.id', ondelete="CASCADE"),
-                                         primary_key=True),
-                 DB.Column('user_id', DB.Integer,
-                           DB.ForeignKey('app_user.id', ondelete="CASCADE"),
-                                         primary_key=True, index=True)
-                )
 
 class Model(BaseModel):
 
@@ -22,6 +14,7 @@ class Model(BaseModel):
 
     __table_args__ = (DB.Index("ix_app_role", "module_name", "class_name",
                                "method_name", unique=True),)
+
 
 class Schema(BaseSchema):
 

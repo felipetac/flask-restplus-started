@@ -22,8 +22,9 @@ class Util(object):
         return _class
 
     def create_all(self):
+        roles = []
         with self.app.app_context():
             Service.truncate()
             for obj in _ROLES_REGISTRY:
-
-                Service.create(obj)
+                roles.append(Service.create(obj))
+        return roles

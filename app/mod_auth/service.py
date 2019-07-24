@@ -32,7 +32,7 @@ class Service:
                                       current_app.config["JWT_ALGORITHM"])
                 user = UserService.get_by_email(payloads["email"], serializer=False)
                 if user:
-                    return user
+                    return user if user.active else "Usuário está inativo!"
             except jwt.ExpiredSignatureError:
                 return "Token está expirado!"
             except jwt.DecodeError:
@@ -44,9 +44,16 @@ class Service:
     def is_role_member(cls, key, module_name, class_name, method_name):
         ret = cls.is_member(key)
         if ret and not isinstance(ret, str):
-            user = ret
+            roles_excluded = [r.id for r in ret.roles_excluded]
+            companies = ret.companies
+            roles_lists = []
+            for company in companies:
+                roles_lists += company.roles
+            roles_lists = set(roles_lists)
+            roles_ids = [r.id for r in roles_lists]
+            user_roles = [r for r in roles_ids if r not in roles_excluded]
             role = RoleService.read_by_attrs(module_name, class_name, method_name)
-            if role and role.role_name in [role.role_name for role in user.roles]:
-                return user
+            if role and role.id in user_roles:
+                return ret
             return "Token não possui autorização para efetuar esta requisição!"
         return ret

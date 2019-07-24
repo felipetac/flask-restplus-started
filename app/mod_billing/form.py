@@ -1,7 +1,12 @@
 from app.mod_common.form import RestForm
-from .model import Model
+from .model import Bill, Cost
 
-class Form(RestForm):
+class CostForm(RestForm):
 
     class Meta:
-        model = Model
+        model = Cost
+
+class BillForm(RestForm):
+
+    class Meta:
+        model = Bill

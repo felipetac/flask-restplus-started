@@ -4,7 +4,7 @@ from app.mod_auth.util import Util as AUTH
 from app.mod_auth.api import AUTHORIZATIONS
 from app.mod_audit.util import Util as AUDIT
 from app.mod_role.util import Util as ROLE
-from .service import Service
+from .service import BillService
 
 API = Namespace('billing', description='Operações de Bilhetagem', authorizations=AUTHORIZATIONS)
 
@@ -29,7 +29,7 @@ class ServicePaginate(Resource):
     @AUDIT.register
     def get(self, page=None, per_page=None, order_by=None, sort=None):
         '''Lista os serviços com paginação'''
-        res = Service.list(page, per_page, order_by, sort)
+        res = BillService.list(page, per_page, order_by, sort)
         if isinstance(res, dict) and "form" in res.keys():
             API.abort(404, "URL inválida", status=res["form"], statusCode="400")
         return res

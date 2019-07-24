@@ -6,7 +6,8 @@ from app.mod_auth.util import Util as AUTH
 from app.mod_auth.api import AUTHORIZATIONS
 from .service import Service
 
-API = Namespace('users', description='Operações do Usuário', authorizations=AUTHORIZATIONS)
+API = Namespace('users', description='Operações do Usuário',
+                authorizations=AUTHORIZATIONS)
 
 _USER = API.model('User', {
     'name': fields.String(required=True, description='Nome do usuário',
@@ -16,27 +17,31 @@ _USER = API.model('User', {
     'password': fields.String(required=True, description='Senha do usuário', example="123456"),
     'active': fields.Boolean(required=True, description='Usuario Ativo',
                              example=True),
-    'roles_id': fields.List(fields.Integer(required=False, description='Lista de ids das regras'))
+    'roles_excluded_id': fields.List(fields.Integer(required=False,
+                                                    description='Lista de ids das regras'))
 })
+
 
 @ROLE.register
 @API.route('/')
 class User(Resource):
     '''Cria um novo usuario'''
     @API.doc('create_user')
-    #@API.doc(security='jwt')
+    # @API.doc(security='jwt')
     @API.expect(_USER)
     @API.response(201, 'Usuário criado', _USER)
     @API.response(400, 'Formulário inválido')
-    #@API.marshal_with(_USER, code=201)
-    #@AUTH.role_required
+    # @API.marshal_with(_USER, code=201)
+    # @AUTH.role_required
     @AUDIT.register
     def post(self):
         '''Cria um novo usuário'''
         res = Service.create(API.payload)
         if "form" in res.keys():
-            API.abort(400, "Formulário inválido", status=res["form"], statusCode="400")
+            API.abort(400, "Formulário inválido",
+                      status=res["form"], statusCode="400")
         return res, 201
+
 
 @ROLE.register
 @API.route('/<int:_id>')
@@ -46,7 +51,7 @@ class UserItem(Resource):
     '''Exibe um usuário e permite a manipulação do mesmo'''
     @API.doc('get_user')
     @API.doc(security='jwt')
-    #@API.marshal_with(_USER)
+    # @API.marshal_with(_USER)
     @API.response(200, 'Usuário apresentado', _USER)
     @AUTH.role_required
     @AUDIT.register
@@ -54,7 +59,8 @@ class UserItem(Resource):
         '''Exibe um usuário dado seu identificador'''
         res = Service.read(_id)
         if not res:
-            API.abort(400, "Usuário não encontrado", status={"id": _id}, statusCode="404")
+            API.abort(400, "Usuário não encontrado",
+                      status={"id": _id}, statusCode="404")
         return res
 
     @API.doc('delete_user')
@@ -66,22 +72,25 @@ class UserItem(Resource):
         '''Apaga um usuário dado seu identificador'''
         res = Service.delete(_id)
         if not res:
-            API.abort(400, "Usuário não encontrado", status={"id": _id}, statusCode="404")
+            API.abort(400, "Usuário não encontrado",
+                      status={"id": _id}, statusCode="404")
         return "Usuário apagado com sucesso!", 204
 
     @API.doc('update_user')
     @API.doc(security='jwt')
     @API.expect(_USER)
     @API.response(200, 'Usuário atualizado', _USER)
-    #@API.marshal_with(_USER, code=200)
+    # @API.marshal_with(_USER, code=200)
     @AUTH.role_required
     @AUDIT.register
     def put(self, _id):
         '''Atualiza um usuário dado seu identificador'''
         res = Service.update(_id, API.payload)
         if not res:
-            API.abort(400, "Usuário não encontrado", status={"id": _id}, statusCode="404")
+            API.abort(400, "Usuário não encontrado",
+                      status={"id": _id}, statusCode="404")
         return res
+
 
 @ROLE.register
 @API.route('/page/<int:page>',
@@ -98,13 +107,14 @@ class UserPaginate(Resource):
     '''Lista os usuários com paginação'''
     @API.doc('list_users')
     @API.doc(security='jwt')
-    #@API.marshal_list_with(_USER)
-    @AUTH.required
+    # @API.marshal_list_with(_USER)
+    @AUTH.role_required
     @AUDIT.register
     @UTIL.marshal_paginate
     def get(self, page=None, per_page=None, order_by=None, sort=None):
         '''Lista os usuários com paginação'''
         res = Service.list(page, per_page, order_by, sort)
         if isinstance(res, dict) and "form" in res.keys():
-            API.abort(404, "URL inválida", status=res["form"], statusCode="400")
+            API.abort(404, "URL inválida",
+                      status=res["form"], statusCode="400")
         return res

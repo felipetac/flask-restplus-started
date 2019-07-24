@@ -3,7 +3,6 @@ from app.mod_common.util import Util as UTIL
 from app.mod_auth.util import Util as AUTH
 from app.mod_auth.api import AUTHORIZATIONS
 from app.mod_audit.util import Util as AUDIT
-from app.mod_billing.util import Util as BILL
 from .service import Service
 from .util import Util as ROLE
 
@@ -27,7 +26,6 @@ class RolePaginate(Resource):
     #@API.marshal_list_with(_ROLE)
     @AUTH.role_required
     @UTIL.marshal_paginate
-    @BILL.get_price
     @AUDIT.register
     def get(self, page=None, per_page=None, order_by=None, sort=None):
         '''Lista os regras com paginação'''

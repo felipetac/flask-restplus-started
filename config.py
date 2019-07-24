@@ -35,7 +35,7 @@ class Config(object):
 
     # JWT
     JWT_ALGORITHM = 'HS512'
-    JWT_EXPIRATION_SECONDS = 420 # 7 minutos
+    JWT_EXPIRATION_SECONDS = 43200 # 12 horas
 
     # Definição da linguagem padrão
     BABEL_DEFAULT_LOCALE = 'pt'

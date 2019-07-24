@@ -1,10 +1,17 @@
 from app.mod_common.service import BaseService
-from .model import Model, Schema
-from .form import Form
+from .model import Bill, Cost, BillSchema, CostSchema
+from .form import BillForm, CostForm
 
-class Service(BaseService):
+class CostService(BaseService):
 
     class Meta:
-        model = Model
-        form = Form
-        schema = Schema
+        model = Cost
+        form = CostForm
+        schema = CostSchema
+
+class BillService(BaseService):
+
+    class Meta:
+        model = Bill
+        form = BillForm
+        schema = BillSchema
