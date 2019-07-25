@@ -6,6 +6,8 @@ from app.mod_common.model import DB, BaseModel, BaseSchema
 from app.mod_role.model import Model as Role, Schema as RoleSchema
 
 USER_ROLE_EXCLUDED = DB.Table('app_user_role_excluded', BaseModel.metadata,
+                              DB.Column('date_created', DB.DateTime,
+                                        default=DB.func.current_timestamp(), index=True),
                               DB.Column('role_id', DB.Integer,
                                         DB.ForeignKey(
                                             'app_role.id', ondelete="CASCADE"),

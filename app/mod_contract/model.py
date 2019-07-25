@@ -4,6 +4,8 @@ from app.mod_user.model import Model as User, Schema as UserSchema
 from app.mod_role.model import Model as Role, Schema as RoleSchema
 
 CONTRACT_USER = DB.Table('app_contract_user', BaseModel.metadata,
+                         DB.Column('date_created', DB.DateTime,
+                                   default=DB.func.current_timestamp(), index=True),
                          DB.Column('contract_id', DB.Integer,
                                    DB.ForeignKey(
                                        'app_contract.id', ondelete="CASCADE"),
@@ -14,6 +16,8 @@ CONTRACT_USER = DB.Table('app_contract_user', BaseModel.metadata,
                                    primary_key=True))
 
 CONTRACT_ROLE = DB.Table('app_contract_role', BaseModel.metadata,
+                         DB.Column('date_created', DB.DateTime,
+                                   default=DB.func.current_timestamp(), index=True),
                          DB.Column('contract_id', DB.Integer,
                                    DB.ForeignKey(
                                        'app_contract.id', ondelete="CASCADE"),

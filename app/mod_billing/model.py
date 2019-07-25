@@ -25,7 +25,7 @@ class Bill(BaseModel):
                         nullable=False, index=True)
     user = DB.relationship(User, cascade="all")
     cost_id = DB.Column(DB.Integer, DB.ForeignKey('app_cost.id', ondelete="CASCADE"),
-                        nullable=False, index=True, unique=True)
+                        nullable=False, index=True)
     cost = DB.relationship(Cost, cascade="all")
 
 class CostSchema(BaseSchema):
