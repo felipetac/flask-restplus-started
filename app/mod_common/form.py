@@ -29,7 +29,8 @@ class RestForm(_BMF):
                   meta=None, skip_unknown_keys=True, **kwargs):
 
         # Fix -----------------------
-        for key in formdata.keys():
+        form_temp = formdata.copy()
+        for key in form_temp.keys():
             if formdata[key] == [0]:
                 del formdata[key]
         # ---------------------------

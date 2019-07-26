@@ -57,4 +57,4 @@ class Schema(BaseSchema):
     users = fields.Nested(OwnerSchema, only=["id", "name", "cpf_cnpj"])
     users = fields.Nested(UserSchema, many=True, only=["id", "name", "email"])
     roles = fields.Nested(RoleSchema, many=True,
-                          only=("id", "role_name", ))
+                          only=("id", "name", ))

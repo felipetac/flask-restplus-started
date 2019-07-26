@@ -39,4 +39,4 @@ class Schema(BaseSchema):
         exclude = ("password", )  # Exclude password from serialization
 
     roles_excluded = fields.Nested(RoleSchema, many=True,
-                                   only=("id", "role_name", ))
+                                   only=("id", "name", ))
