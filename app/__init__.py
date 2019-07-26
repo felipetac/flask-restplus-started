@@ -1,5 +1,3 @@
-from app.mod_role.util import Util as Role  # pylint: disable=wrong-import-position
-from .api import BLUEPRINT as API  # pylint: disable=wrong-import-position
 import os
 from flask import Flask, jsonify, current_app
 from flask_sqlalchemy import SQLAlchemy
@@ -37,6 +35,9 @@ def not_found(error):
     ret = error.args if error.args else "Url não encontrada..."
     return jsonify({"result": ret}), 404
 
+from app.mod_role.util import Util as Role  # pylint: disable=wrong-import-position
+
+from .api import BLUEPRINT as API  # pylint: disable=wrong-import-position
 # Register blueprint(s)
 APP.register_blueprint(API)
 
