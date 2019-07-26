@@ -9,8 +9,8 @@ class Model(BaseModel):
     module_name = DB.Column(DB.String(200), nullable=False)
     class_name = DB.Column(DB.String(200), nullable=False)
     method_name = DB.Column(DB.String(200), nullable=False)
-    role_name = DB.Column(DB.String(200), nullable=False, unique=True)
-    role_desc = DB.Column(DB.String(200), nullable=True)
+    name = DB.Column(DB.String(200), nullable=False, unique=True)
+    description = DB.Column(DB.String(200), nullable=True)
 
     __table_args__ = (DB.Index("ix_app_role", "module_name", "class_name",
                                "method_name", unique=True),)

@@ -40,6 +40,6 @@ class BillSchema(BaseSchema):
     class Meta:
         model = Bill
 
-    contract = fields.Nested(ContractSchema, only=["id", "company_name", "company_cnpj"])
+    contract = fields.Nested(ContractSchema, only=["id", "name", "owner"])
     user = fields.Nested(UserSchema, only=["id", "name"])
     cost = fields.Nested(CostSchema, only=["id", "role", "cost"])

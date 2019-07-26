@@ -45,10 +45,10 @@ class Service:
         ret = cls.is_member(key)
         if ret and not isinstance(ret, str):
             roles_excluded = [r.id for r in ret.roles_excluded]
-            companies = ret.companies
+            contracts = ret.contracts
             roles_lists = []
-            for company in companies:
-                roles_lists += company.roles
+            for contract in contracts:
+                roles_lists += contract.roles
             roles_lists = set(roles_lists)
             roles_ids = [r.id for r in roles_lists]
             user_roles = [r for r in roles_ids if r not in roles_excluded]

@@ -102,6 +102,15 @@ class BaseService():
         return None
 
     @classmethod
+    def get_choices(cls, column_key_name, column_value_name):
+        cls._validate_instances(["model"])
+        model = cls.Meta.model
+        if Util.model_exists(model):
+            return model.query.with_entities(getattr(model, column_key_name),
+                                             getattr(model, column_value_name)).all()
+        return []
+
+    @classmethod
     def _validate_instances(cls, instances=None):
         if instances and isinstance(instances, list):
             for instance in instances:

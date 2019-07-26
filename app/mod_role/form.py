@@ -6,4 +6,3 @@ class Form(RestForm):
 
     class Meta:
         model = Model
-        #field_args = {'role_name': {'filters': [to_lower]}}

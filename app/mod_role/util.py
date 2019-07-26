@@ -18,7 +18,7 @@ class Util(object):
             _ROLES_REGISTRY.append({"module_name": module_name,
                                     "class_name": class_name,
                                     "method_name": method,
-                                    "role_name": class_name+"."+method})
+                                    "name": class_name+"."+method})
         return _class
 
     def create_all(self):

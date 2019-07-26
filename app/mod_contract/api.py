@@ -6,7 +6,7 @@ from app.mod_auth.util import Util as AUTH
 from app.mod_auth.api import AUTHORIZATIONS
 from .service import Service
 
-API = Namespace('contracts', description='Operações do Contrato',
+API = Namespace('contract', description='Operações do Contrato',
                 authorizations=AUTHORIZATIONS)
 
 _CONTRACT = API.model('Contract', {

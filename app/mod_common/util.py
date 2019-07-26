@@ -1,6 +1,7 @@
 from urllib import parse
 from functools import wraps
 from flask import request
+from app import DB
 #class method decorator
 class Util(object):
 
@@ -29,3 +30,7 @@ class Util(object):
                 not func.startswith("__")]
         methods = [m for m in methods if m != "Meta"]
         return methods
+
+    @staticmethod
+    def model_exists(model_class):
+        return model_class.metadata.tables[model_class.__tablename__].exists(DB.engine)

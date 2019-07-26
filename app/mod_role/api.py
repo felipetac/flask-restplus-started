@@ -6,7 +6,7 @@ from app.mod_audit.util import Util as AUDIT
 from .service import Service
 from .util import Util as ROLE
 
-API = Namespace('roles', description='Operações da Regra', authorizations=AUTHORIZATIONS)
+API = Namespace('role', description='Operações da Regra', authorizations=AUTHORIZATIONS)
 
 @ROLE.register
 @API.route('/page/<int:page>',
@@ -24,7 +24,7 @@ class RolePaginate(Resource):
     @API.doc('list_roles')
     @API.doc(security='jwt')
     #@API.marshal_list_with(_ROLE)
-    @AUTH.role_required
+    #@AUTH.role_required
     @UTIL.marshal_paginate
     @AUDIT.register
     def get(self, page=None, per_page=None, order_by=None, sort=None):

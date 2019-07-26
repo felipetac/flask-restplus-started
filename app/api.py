@@ -6,6 +6,7 @@ from app.mod_user.api import API as UserNS
 from app.mod_role.api import API as RoleNS
 from app.mod_auth.api import API as AuthNS
 from app.mod_audit.api import API as AuditNS
+from app.mod_owner.api import API as OwnerNS
 from app.mod_contract.api import API as ContractNS
 from app.mod_billing.api import API as BillingNS
 # pylint: enable=wrong-import-position
@@ -22,5 +23,6 @@ API.add_namespace(UserNS)
 API.add_namespace(RoleNS)
 API.add_namespace(AuthNS)
 API.add_namespace(AuditNS)
+API.add_namespace(OwnerNS)
 API.add_namespace(ContractNS)
 API.add_namespace(BillingNS)
