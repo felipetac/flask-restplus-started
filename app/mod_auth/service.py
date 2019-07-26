@@ -5,6 +5,7 @@ from app.mod_user.service import Service as UserService
 from app.mod_role.service import Service as RoleService
 from app.mod_auth.form import LoginForm
 
+
 class Service:
 
     @staticmethod
@@ -30,7 +31,8 @@ class Service:
                 payloads = jwt.decode(key.replace("Bearer ", ""),
                                       current_app.config["SECRET_KEY"],
                                       current_app.config["JWT_ALGORITHM"])
-                user = UserService.get_by_email(payloads["email"], serializer=False)
+                user = UserService.get_by_email(
+                    payloads["email"], serializer=False)
                 if user:
                     return user if user.active else "Usuário está inativo!"
             except jwt.ExpiredSignatureError:
@@ -52,7 +54,8 @@ class Service:
             roles_lists = set(roles_lists)
             roles_ids = [r.id for r in roles_lists]
             user_roles = [r for r in roles_ids if r not in roles_excluded]
-            role = RoleService.read_by_attrs(module_name, class_name, method_name)
+            role = RoleService.read_by_attrs(
+                module_name, class_name, method_name)
             if role and role.id in user_roles:
                 return ret
             return "Token não possui autorização para efetuar esta requisição!"

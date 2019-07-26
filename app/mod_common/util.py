@@ -2,7 +2,9 @@ from urllib import parse
 from functools import wraps
 from flask import request
 from app import DB
-#class method decorator
+# class method decorator
+
+
 class Util(object):
 
     @classmethod
@@ -15,19 +17,20 @@ class Util(object):
             if isinstance(data, dict) and "page" in data.keys():
                 for k in ["curr", "prev", "next", "last"]:
                     if k in data["page"].keys() and data["page"][k]:
-                        data["page"][k] = parse.urljoin(request.base_url, str(data["page"][k]))
+                        data["page"][k] = parse.urljoin(
+                            request.base_url, str(data["page"][k]))
             return data
         return wrapper
 
     @staticmethod
     def get_class_attributes(_class):
-        return [i for i in dir(_class) if not callable(i) and not i.startswith('_') and  \
+        return [i for i in dir(_class) if not callable(i) and not i.startswith('_') and
                 i not in ["metadata", "query", "query_class"]]
 
     @staticmethod
     def get_class_methods(_class):
-        methods = [func for func in dir(_class) if callable(getattr(_class, func)) and \
-                not func.startswith("__")]
+        methods = [func for func in dir(_class) if callable(getattr(_class, func)) and
+                   not func.startswith("__")]
         methods = [m for m in methods if m != "Meta"]
         return methods
 

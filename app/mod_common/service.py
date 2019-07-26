@@ -1,8 +1,9 @@
-#from abc import ABC #, abstractstaticmethod, abstractclassmethod # Para implementar abstract class
+# from abc import ABC #, abstractstaticmethod, abstractclassmethod # Para implementar abstract class
 import math
 from .util import Util
 from .model import DB, BaseModel, BaseSchema
 from .form import RestForm, ListForm
+
 
 class BaseService():
 
@@ -18,21 +19,23 @@ class BaseService():
         cls._validate_instances(["model", "form", "schema"])
         obj = {}
         for attr in ["page", "per_page", "order_by", "sort"]:
-            _attr = eval(attr) # pylint: disable=eval-used
+            _attr = eval(attr)  # pylint: disable=eval-used
             if _attr:
                 obj[attr] = _attr
         form = ListForm.from_json(obj)
-        form.order_by.choices = [(i, i) for i in Util.get_class_attributes(cls.Meta.model)]
+        form.order_by.choices = [
+            (i, i) for i in Util.get_class_attributes(cls.Meta.model)]
         if form.validate():
             page, per_page, order_by, sort = form.page.data, form.per_page.data, \
-                                             form.order_by.data, form.sort.data
+                form.order_by.data, form.sort.data
             order_by = getattr(cls.Meta.model, order_by)
             orderby_and_sort = getattr(order_by, sort)
             entities = cls.Meta.model.query \
-                                  .order_by(orderby_and_sort()) \
-                                  .paginate(page, per_page, error_out=False).items
+                .order_by(orderby_and_sort()) \
+                .paginate(page, per_page, error_out=False).items
             if entities:
-                entity_schema = cls.Meta.schema(many=True) # pylint: disable=not-callable
+                entity_schema = cls.Meta.schema(
+                    many=True)  # pylint: disable=not-callable
                 data = entity_schema.dump(entities)
                 if data:
                     count = DB.session.query(order_by).count()
@@ -40,7 +43,8 @@ class BaseService():
                     last_p = math.ceil(count / per_page)
                     nxt = (page + 1) if page < last_p else None
                     last_p = last_p if last_p > 0 else 1
-                    page = {"curr": page, "prev": prev, "next": nxt, "last": last_p}
+                    page = {"curr": page, "prev": prev,
+                            "next": nxt, "last": last_p}
                     return {"data": data, "page": page}
                 return data
             return []
@@ -53,7 +57,7 @@ class BaseService():
             entity = cls.Meta.model.query.filter_by(id=entity_id).first()
             if entity:
                 if serializer:
-                    entity_schema = cls.Meta.schema() # pylint: disable=not-callable
+                    entity_schema = cls.Meta.schema()  # pylint: disable=not-callable
                     return entity_schema.dump(entity)
                 return entity
         return None

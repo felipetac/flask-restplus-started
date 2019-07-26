@@ -25,6 +25,7 @@ _KEY = API.model('Key', {
     'key': fields.String(required=True, description='Chave de acesso'),
 })
 
+
 @ROLE.register
 @API.route('/getkey')
 @API.expect(_USER)
@@ -38,5 +39,6 @@ class Key(Resource):
         '''Obter a chave de acesso'''
         res = Service.get_key(API.payload)
         if "form" in res.keys():
-            API.abort(400, "Formulário inválido", status=res["form"], statusCode="400")
+            API.abort(400, "Formulário inválido",
+                      status=res["form"], statusCode="400")
         return res["data"], 201

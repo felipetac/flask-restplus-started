@@ -2,12 +2,14 @@ from wtforms.fields import SelectField
 from app.mod_common.form import RestForm
 from .model import Bill, Cost
 
+
 class CostForm(RestForm):
 
     class Meta:
         model = Cost
 
     role_id = SelectField('Role Id', coerce=int)
+
 
 class BillForm(RestForm):
 

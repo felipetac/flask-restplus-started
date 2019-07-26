@@ -1,3 +1,5 @@
+from app.mod_role.util import Util as Role  # pylint: disable=wrong-import-position
+from .api import BLUEPRINT as API  # pylint: disable=wrong-import-position
 import os
 from flask import Flask, jsonify, current_app
 from flask_sqlalchemy import SQLAlchemy
@@ -9,7 +11,8 @@ from config import CONFIG
 APP = Flask(__name__)
 
 # Configurations
-__ENV = os.environ["APP_SETTINGS"] if "APP_SETTINGS" in os.environ.keys() else "default"
+__ENV = os.environ["APP_SETTINGS"] if "APP_SETTINGS" in os.environ.keys(
+) else "default"
 APP.config.from_object(CONFIG.get(__ENV))
 
 with APP.app_context():
@@ -34,10 +37,7 @@ def not_found(error):
     ret = error.args if error.args else "Url não encontrada..."
     return jsonify({"result": ret}), 404
 
-from app.mod_role.util import Util as Role # pylint: disable=wrong-import-position
-
 # Register blueprint(s)
-from .api import BLUEPRINT as API # pylint: disable=wrong-import-position
 APP.register_blueprint(API)
 
 # Build the database:

@@ -6,7 +6,9 @@ from app.mod_audit.util import Util as AUDIT
 from app.mod_role.util import Util as ROLE
 from .service import BillService
 
-API = Namespace('billing', description='Operações de Bilhetagem', authorizations=AUTHORIZATIONS)
+API = Namespace('billing', description='Operações de Bilhetagem',
+                authorizations=AUTHORIZATIONS)
+
 
 @ROLE.register
 @API.route('/service/page/<int:page>',
@@ -23,7 +25,7 @@ class ServicePaginate(Resource):
     '''Lista os serviços com paginação'''
     @API.doc('list_services')
     @API.doc(security='jwt')
-    #@API.marshal_list_with(_ROLE)
+    # @API.marshal_list_with(_ROLE)
     @AUTH.role_required
     @UTIL.marshal_paginate
     @AUDIT.register
@@ -31,5 +33,6 @@ class ServicePaginate(Resource):
         '''Lista os serviços com paginação'''
         res = BillService.list(page, per_page, order_by, sort)
         if isinstance(res, dict) and "form" in res.keys():
-            API.abort(404, "URL inválida", status=res["form"], statusCode="400")
+            API.abort(404, "URL inválida",
+                      status=res["form"], statusCode="400")
         return res

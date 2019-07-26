@@ -3,6 +3,7 @@ from flask import request
 from app.mod_auth.service import Service as AuthService
 from .service import Service
 
+
 class Util:
 
     @classmethod

@@ -2,6 +2,7 @@ from marshmallow import fields
 from app.mod_common.model import DB, BaseModel, BaseSchema
 from app.mod_user.model import Model as User, Schema as UserSchema
 
+
 class Model(BaseModel):
 
     __tablename__ = 'app_audit'
@@ -14,7 +15,9 @@ class Model(BaseModel):
                         nullable=True, index=True)
     user = DB.relationship(User, cascade="all")
 
-    __table_args__ = (DB.Index("ix_app_audit_service", module_name, class_name, method_name),)
+    __table_args__ = (DB.Index("ix_app_audit_service",
+                               module_name, class_name, method_name),)
+
 
 class Schema(BaseSchema):
 

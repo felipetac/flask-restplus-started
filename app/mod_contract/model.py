@@ -38,7 +38,8 @@ class Model(BaseModel):
     owner_id = DB.Column(DB.Integer, DB.ForeignKey('app_contract_owner.id',
                                                    ondelete="CASCADE"),
                          nullable=False, index=True)
-    owner = DB.relationship(Owner, backref=DB.backref('contracts'), cascade="all")
+    owner = DB.relationship(
+        Owner, backref=DB.backref('contracts'), cascade="all")
     is_active = DB.Column(DB.Boolean, nullable=False, default=True)
     is_billed = DB.Column(DB.Boolean, nullable=False, default=True)
     bill_day = DB.Column(DB.Integer, nullable=False, default=30)

@@ -3,6 +3,7 @@ from flask import request
 from flask_restplus import abort
 from .service import Service
 
+
 class Util(object):
 
     @classmethod
