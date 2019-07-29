@@ -8,6 +8,4 @@ class Form(RestForm):
     class Meta:
         model = Model
 
-    contract_id = SelectField('Contracts Id', coerce=int)
-    user_id = SelectField('User Id', coerce=int)
-    cost_id = SelectField('Cost Id', coerce=int)
+    role_id = SelectField('Role Id', coerce=int)

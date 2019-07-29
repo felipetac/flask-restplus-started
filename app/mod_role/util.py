@@ -1,6 +1,4 @@
-from .service import Service
-
-_ROLES_REGISTRY = []
+from .service import ROLES_REGISTRY
 
 
 class Util(object):
@@ -16,16 +14,8 @@ class Util(object):
                    not func.startswith("__")]
         methods = [m for m in methods if m in ["get", "post", "put", "delete"]]
         for method in methods:
-            _ROLES_REGISTRY.append({"module_name": module_name,
-                                    "class_name": class_name,
-                                    "method_name": method,
-                                    "name": class_name+"."+method})
+            ROLES_REGISTRY.append({"module_name": module_name,
+                                   "class_name": class_name,
+                                   "method_name": method,
+                                   "name": class_name+"."+method})
         return _class
-
-    def create_all(self):
-        roles = []
-        with self.app.app_context():
-            Service.truncate()
-            for obj in _ROLES_REGISTRY:
-                roles.append(Service.create(obj))
-        return roles

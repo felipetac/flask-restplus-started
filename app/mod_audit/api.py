@@ -7,7 +7,7 @@ from .util import Util as AUDIT
 from .service import Service
 
 
-API = Namespace('audit', description='Operações da entidade Audit',
+API = Namespace('audit', description='Operações de Auditoria',
                 authorizations=AUTHORIZATIONS)
 
 

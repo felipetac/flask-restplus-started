@@ -106,6 +106,10 @@ class BaseService():
         return None
 
     @classmethod
+    def truncate(cls):
+        cls.Meta.model.query.delete()
+
+    @classmethod
     def get_choices(cls, column_key_name, column_value_name):
         cls._validate_instances(["model"])
         model = cls.Meta.model

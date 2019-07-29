@@ -24,7 +24,7 @@ class RolePaginate(Resource):
     @API.doc('list_roles')
     @API.doc(security='jwt')
     #@API.marshal_list_with(_ROLE)
-    #@AUTH.role_required
+    @AUTH.role_required
     @UTIL.marshal_paginate
     @AUDIT.register
     def get(self, page=None, per_page=None, order_by=None, sort=None):

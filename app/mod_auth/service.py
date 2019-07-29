@@ -50,7 +50,8 @@ class Service:
             contracts = ret.contracts
             roles_lists = []
             for contract in contracts:
-                roles_lists += contract.roles
+                if contract.is_active:
+                    roles_lists += contract.roles
             roles_lists = set(roles_lists)
             roles_ids = [r.id for r in roles_lists]
             user_roles = [r for r in roles_ids if r not in roles_excluded]

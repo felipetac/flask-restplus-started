@@ -1,3 +1,5 @@
+
+
 import os
 from flask import Flask, jsonify, current_app
 from flask_sqlalchemy import SQLAlchemy
@@ -35,9 +37,12 @@ def not_found(error):
     ret = error.args if error.args else "Url não encontrada..."
     return jsonify({"result": ret}), 404
 
-from app.mod_role.util import Util as Role  # pylint: disable=wrong-import-position
+# pylint: disable=wrong-import-position
 
-from .api import BLUEPRINT as API  # pylint: disable=wrong-import-position
+from app.mod_role.service import Service as RoleService
+from app.mod_cost.service import Service as CostService
+
+from .api import BLUEPRINT as API
 # Register blueprint(s)
 APP.register_blueprint(API)
 
@@ -46,4 +51,9 @@ APP.register_blueprint(API)
 DB.create_all()
 
 # Persist All roles in database
-Role(APP).create_all()
+_ROLES = RoleService(APP).create_all()
+
+# Create cost for each role
+CostService.create_all(_ROLES)
+
+# pylint: enable=wrong-import-position

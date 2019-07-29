@@ -1,21 +1,10 @@
 from marshmallow import fields
 from app.mod_common.model import DB, BaseModel, BaseSchema
 from app.mod_user.model import Model as User, Schema as UserSchema
-from app.mod_role.model import Model as Role, Schema as RoleSchema
 from app.mod_contract.model import Model as Contract, Schema as ContractSchema
+from app.mod_cost.model import Model as Cost, Schema as CostSchema
 
-
-class Cost(BaseModel):
-
-    __tablename__ = 'app_cost'
-
-    role_id = DB.Column(DB.Integer, DB.ForeignKey('app_role.id', ondelete="CASCADE"),
-                        nullable=False, index=True, unique=True)
-    role = DB.relationship(Role, cascade="all")
-    cost = DB.Column(DB.Numeric, nullable=False, default=0.0)
-
-
-class Bill(BaseModel):
+class Model(BaseModel):
 
     __tablename__ = 'app_bill'
 
@@ -30,19 +19,10 @@ class Bill(BaseModel):
                         nullable=False, index=True)
     cost = DB.relationship(Cost, cascade="all")
 
-
-class CostSchema(BaseSchema):
-
-    class Meta:
-        model = Cost
-
-    role = fields.Nested(RoleSchema, only=["id", "name"])
-
-
-class BillSchema(BaseSchema):
+class Schema(BaseSchema):
 
     class Meta:
-        model = Bill
+        model = Model
 
     contract = fields.Nested(ContractSchema, only=["id", "name", "owner"])
     user = fields.Nested(UserSchema, only=["id", "name"])
