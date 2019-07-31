@@ -1,5 +1,8 @@
 # from abc import ABC #, abstractstaticmethod, abstractclassmethod # Para implementar abstract class
 import math
+from urllib import parse
+from functools import wraps
+from flask import request
 from .util import Util
 from .model import DB, BaseModel, BaseSchema
 from .form import RestForm, ListForm
@@ -51,12 +54,12 @@ class BaseService():
         return {"form": form.errors}
 
     @classmethod
-    def read(cls, entity_id, serializer=True):
+    def read(cls, entity_id, serialize=True):
         cls._validate_instances(["model", "schema"])
         if entity_id and isinstance(entity_id, int):
             entity = cls.Meta.model.query.filter_by(id=entity_id).first()
             if entity:
-                if serializer:
+                if serialize:
                     entity_schema = cls.Meta.schema()  # pylint: disable=not-callable
                     return entity_schema.dump(entity)
                 return entity
@@ -66,7 +69,7 @@ class BaseService():
     def delete(cls, entity_id):
         cls._validate_instances(["model"])
         if entity_id and isinstance(entity_id, int):
-            entity = cls.read(entity_id, serializer=False)
+            entity = cls.read(entity_id, serialize=False)
             if entity:
                 DB.session.delete(entity)
                 DB.session.commit()
@@ -74,7 +77,7 @@ class BaseService():
         return None
 
     @classmethod
-    def create(cls, json_obj, serializer=True):
+    def create(cls, json_obj, serialize=True):
         cls._validate_instances(["model", "form", "schema"])
         form = cls.Meta.form.from_json(json_obj)
         if form.validate():
@@ -82,23 +85,23 @@ class BaseService():
             form.populate_obj(model)
             DB.session.add(model)
             DB.session.commit()
-            if serializer:
+            if serialize:
                 schema = cls.Meta.schema()
                 return schema.dump(model)
             return model
         return {"form": form.errors}
 
     @classmethod
-    def update(cls, entity_id, json_obj, serializer=True):
+    def update(cls, entity_id, json_obj, serialize=True):
         cls._validate_instances(["form", "schema"])
         if entity_id and isinstance(entity_id, int):
-            obj = cls.read(entity_id, serializer=False)
+            obj = cls.read(entity_id, serialize=False)
             if obj:
                 form = cls.Meta.form.from_json(json_obj, obj=obj)
                 if form.validate_on_submit():
                     form.populate_obj(obj)
                     DB.session.commit()
-                    if serializer:
+                    if serialize:
                         schema = cls.Meta.schema()
                         return schema.dump(obj)
                     return obj
@@ -137,3 +140,18 @@ class BaseService():
                        not issubclass(cls.Meta.form, RestForm):
                         raise Exception("É necessário passar o atributo 'form'" +
                                         "(Objeto WTForm) na classe inner Meta")
+
+    @staticmethod
+    def marshal_paginate(function):
+        @wraps(function)
+        def wrapper(*args, **kwargs):
+            data = function(*args, **kwargs)
+            if isinstance(data, tuple):
+                data = data[0]
+            if isinstance(data, dict) and "page" in data.keys():
+                for k in ["curr", "prev", "next", "last"]:
+                    if k in data["page"].keys() and data["page"][k]:
+                        data["page"][k] = parse.urljoin(
+                            request.base_url, str(data["page"][k]))
+            return data
+        return wrapper

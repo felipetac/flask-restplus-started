@@ -11,11 +11,11 @@ class Service(BaseService):
         schema = Schema
 
     @classmethod
-    def get_by_email(cls, email, serializer=True):
+    def get_by_email(cls, email, serialize=True):
         if email and isinstance(email, str):
             user = Model.query.filter_by(email=email).first()
             if user:
-                if serializer:
+                if serialize:
                     user_schema = Schema()
                     return {"data": user_schema.dump(user)}
                 return user

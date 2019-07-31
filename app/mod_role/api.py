@@ -1,10 +1,8 @@
 from flask_restplus import Namespace, Resource
-from app.mod_common.util import Util as UTIL
-from app.mod_auth.util import Util as AUTH
+from app.mod_auth.service import Service as AUTH
 from app.mod_auth.api import AUTHORIZATIONS
-from app.mod_audit.util import Util as AUDIT
-from .service import Service
-from .util import Util as ROLE
+from app.mod_audit.service import Service as AUDIT
+from .service import Service as ROLE
 
 API = Namespace('role', description='Operações da Regra', authorizations=AUTHORIZATIONS)
 
@@ -24,12 +22,12 @@ class RolePaginate(Resource):
     @API.doc('list_roles')
     @API.doc(security='jwt')
     #@API.marshal_list_with(_ROLE)
-    @AUTH.role_required
-    @UTIL.marshal_paginate
+    @AUTH.required
+    @ROLE.marshal_paginate
     @AUDIT.register
     def get(self, page=None, per_page=None, order_by=None, sort=None):
         '''Lista os regras com paginação'''
-        res = Service.list(page, per_page, order_by, sort)
+        res = ROLE.list(page, per_page, order_by, sort)
         if isinstance(res, dict) and "form" in res.keys():
             API.abort(404, "URL inválida", status=res["form"], statusCode="400")
         return res

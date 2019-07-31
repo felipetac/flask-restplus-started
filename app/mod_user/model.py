@@ -27,7 +27,6 @@ class Model(BaseModel):
     email = DB.Column(EmailType, nullable=False, unique=True, index=True)
     password = DB.Column(PasswordType(onload=lambda **kwargs: dict(schemes=PS, **kwargs)),  # pylint: disable=unnecessary-lambda
                          nullable=False)
-    active = DB.Column(DB.Boolean, nullable=False, default=True)
     roles_excluded = DB.relationship(Role, secondary=USER_ROLE_EXCLUDED,
                                      backref=DB.backref('users'), cascade="all")
 

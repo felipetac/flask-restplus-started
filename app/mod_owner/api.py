@@ -1,10 +1,9 @@
 from flask_restplus import Namespace, Resource, fields
-from app.mod_common.util import Util as UTIL
-from app.mod_role.util import Util as ROLE
-from app.mod_audit.util import Util as AUDIT
-from app.mod_auth.util import Util as AUTH
+from app.mod_role.service import Service as ROLE
+from app.mod_audit.service import Service as AUDIT
+from app.mod_auth.service import Service as AUTH
 from app.mod_auth.api import AUTHORIZATIONS
-from .service import Service
+from .service import Service as OWNER
 
 API = Namespace('owner', description='Operações do Dono',
                 authorizations=AUTHORIZATIONS)
@@ -32,11 +31,11 @@ class Owner(Resource):
     @API.response(201, 'Dono criado', _USER)
     @API.response(400, 'Formulário inválido')
     # @API.marshal_with(_USER, code=201)
-    # @AUTH.role_required
+    # @AUTH.required
     @AUDIT.register
     def post(self):
         '''Cria um novo dono'''
-        res = Service.create(API.payload)
+        res = OWNER.create(API.payload)
         if "form" in res.keys():
             API.abort(400, "Formulário inválido",
                       status=res["form"], statusCode="400")
@@ -53,11 +52,11 @@ class OwnerItem(Resource):
     @API.doc(security='jwt')
     # @API.marshal_with(_USER)
     @API.response(200, 'Dono apresentado', _USER)
-    @AUTH.role_required
+    @AUTH.required
     @AUDIT.register
     def get(self, _id):
         '''Exibe um dono dado seu identificador'''
-        res = Service.read(_id)
+        res = OWNER.read(_id)
         if not res:
             API.abort(400, "Dono não encontrado",
                       status={"id": _id}, statusCode="404")
@@ -66,11 +65,11 @@ class OwnerItem(Resource):
     @API.doc('delete_owner')
     @API.doc(security='jwt')
     @API.response(204, 'Dono apagado')
-    @AUTH.role_required
+    @AUTH.required
     @AUDIT.register
     def delete(self, _id):
         '''Apaga um dono dado seu identificador'''
-        res = Service.delete(_id)
+        res = OWNER.delete(_id)
         if not res:
             API.abort(400, "Dono não encontrado",
                       status={"id": _id}, statusCode="404")
@@ -81,11 +80,11 @@ class OwnerItem(Resource):
     @API.expect(_USER)
     @API.response(200, 'Dono atualizado', _USER)
     # @API.marshal_with(_USER, code=200)
-    @AUTH.role_required
+    @AUTH.required
     @AUDIT.register
     def put(self, _id):
         '''Atualiza um dono dado seu identificador'''
-        res = Service.update(_id, API.payload)
+        res = OWNER.update(_id, API.payload)
         if not res:
             API.abort(400, "Dono não encontrado",
                       status={"id": _id}, statusCode="404")
@@ -108,12 +107,12 @@ class OwnerPaginate(Resource):
     @API.doc('list_owners')
     @API.doc(security='jwt')
     # @API.marshal_list_with(_USER)
-    @AUTH.role_required
+    @AUTH.required
     @AUDIT.register
-    @UTIL.marshal_paginate
+    @OWNER.marshal_paginate
     def get(self, page=None, per_page=None, order_by=None, sort=None):
         '''Lista os donos com paginação'''
-        res = Service.list(page, per_page, order_by, sort)
+        res = OWNER.list(page, per_page, order_by, sort)
         if isinstance(res, dict) and "form" in res.keys():
             API.abort(404, "URL inválida",
                       status=res["form"], statusCode="400")

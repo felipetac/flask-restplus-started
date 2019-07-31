@@ -9,3 +9,5 @@ class LoginForm(RestForm):
                        Required(message='E-mail é requerido! preenche-o.')])
     password = PasswordField('Password',
                              [Required(message='Precisa fornecer uma senha.')])
+    issuer = TextField('Contract Issuer',
+                       [Required(message='Código do emissor é requerido! preenche-o.')])

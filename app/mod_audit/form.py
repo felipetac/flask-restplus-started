@@ -15,6 +15,6 @@ class Form(RestForm):
 
     def populate_obj(self, entity):
         if self.user_id.data:
-            user = UserService.read(self.user_id.data, serializer=False)
+            user = UserService.read(self.user_id.data, serialize=False)
             entity.user = user
         super().populate_obj(entity)

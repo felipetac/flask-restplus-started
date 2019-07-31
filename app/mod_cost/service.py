@@ -12,7 +12,7 @@ class Service(BaseService):
         schema = Schema
 
     @classmethod
-    def cost_by_role_id(cls, role_id):
+    def read_by_role(cls, role_id):
         if role_id and isinstance(role_id, int):
             return cls.Meta.model.query.filter_by(role_id=role_id).first()
         return None
@@ -23,7 +23,7 @@ class Service(BaseService):
         if roles and isinstance(roles, list):
             for role in roles:
                 if isinstance(role, dict) and "id" in role.keys():
-                    cost = cls.cost_by_role_id(role["id"])
+                    cost = cls.read_by_role(role["id"])
                     if not cost:
                         cost = cls.Meta.model()
                         role = schema.load(role)

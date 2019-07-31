@@ -20,6 +20,6 @@ class Form(RestForm):
         if self.roles_excluded_id.data:
             for role_id in self.roles_excluded_id.data:
                 if role_id not in [role.id for role in entity.roles]:
-                    role = RoleService.read(role_id, serializer=False)
+                    role = RoleService.read(role_id, serialize=False)
                     entity.roles.append(role)
         super().populate_obj(entity)

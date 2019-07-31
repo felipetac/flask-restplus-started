@@ -1,7 +1,7 @@
 
 from flask_restplus import Namespace, Resource, fields
-from app.mod_audit.util import Util as AUDIT
-from app.mod_role.util import Util as ROLE
+from app.mod_audit.service import Service as AUDIT
+from app.mod_role.service import Service as ROLE
 from .service import Service
 
 AUTHORIZATIONS = {
@@ -18,7 +18,9 @@ _USER = API.model('Login', {
     'email': fields.String(required=True, description='Email do Usuário',
                            example="felipe.toscano@gmail.com"),
     'password': fields.String(required=True, description='Senha do Usuário',
-                              example="123456")
+                              example="123456"),
+    'issuer': fields.String(required=True, description='Código do Emissor do Contrato',
+                            example="contrato-w4q56")
 })
 
 _KEY = API.model('Key', {

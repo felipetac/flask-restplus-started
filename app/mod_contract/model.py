@@ -34,7 +34,8 @@ class Model(BaseModel):
 
     __tablename__ = 'app_contract'
 
-    name = DB.Column(DB.String(200), nullable=False)
+    name = DB.Column(DB.String(200), nullable=False, unique=True)
+    issuer = DB.Column(DB.String(100), nullable=False, unique=True)
     owner_id = DB.Column(DB.Integer, DB.ForeignKey('app_contract_owner.id',
                                                    ondelete="CASCADE"),
                          nullable=False, index=True)

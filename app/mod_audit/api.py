@@ -1,10 +1,8 @@
 from flask_restplus import Namespace, Resource
-from app.mod_common.util import Util as UTIL
-from app.mod_role.util import Util as ROLE
-from app.mod_auth.util import Util as AUTH
+from app.mod_role.service import Service as ROLE
+from app.mod_auth.service import Service as AUTH
 from app.mod_auth.api import AUTHORIZATIONS
-from .util import Util as AUDIT
-from .service import Service
+from .service import Service as AUDIT
 
 
 API = Namespace('audit', description='Operações de Auditoria',
@@ -27,12 +25,12 @@ class AuditPaginate(Resource):
     @API.doc('list_roles')
     @API.doc(security='jwt')
     # @API.marshal_list_with(_ROLE)
-    @AUTH.role_required
+    @AUTH.required
     @AUDIT.register
-    @UTIL.marshal_paginate
+    @AUDIT.marshal_paginate
     def get(self, page=None, per_page=None, order_by=None, sort=None):
         '''Lista as ações com paginação'''
-        res = Service.list(page, per_page, order_by, sort)
+        res = AUDIT.list(page, per_page, order_by, sort)
         if isinstance(res, dict) and "form" in res.keys():
             API.abort(404, "URL inválida",
                       status=res["form"], statusCode="400")
