@@ -20,7 +20,7 @@ API = Namespace('billing', description='Operações de Bilhetagem',
 @API.param('per_page', 'Quantidade de regras por página')
 @API.param('order_by', 'Atributo de ordenação')
 @API.param('sort', 'Tipo da ordenação')
-class ServicePaginate(Resource):
+class BillPaginate(Resource):
     '''Lista os serviços com paginação'''
     @API.doc('list_services')
     @API.doc(security='jwt')
