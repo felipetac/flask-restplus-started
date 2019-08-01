@@ -55,7 +55,7 @@ class DevelopmentConfig(Config):
 class TestingConfig(Config):
     TESTING = True
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
-        'sqlite:///' # in-memory database
+        'sqlite:///' + os.path.join(BASE_DIR, 'app_test.db')
 
 class ProductionConfig(Config):
     POSTGRES_URL = os.environ.get("POSTGRES_URL")

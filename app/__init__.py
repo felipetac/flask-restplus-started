@@ -37,23 +37,27 @@ def not_found(error):
     ret = error.args if error.args else "Url não encontrada..."
     return jsonify({"result": ret}), 404
 
-# pylint: disable=wrong-import-position
+def create_app(env=None):
+    if not APP.blueprints.keys():
 
-from app.mod_role.service import Service as RoleService
-from app.mod_cost.service import Service as CostService
+        if env and env == 'testing':
+            APP.config.from_object(CONFIG.get(env))
 
-from .api import BLUEPRINT as API
-# Register blueprint(s)
-APP.register_blueprint(API)
+        from app.mod_role.service import Service as RoleService
+        from app.mod_cost.service import Service as CostService
 
-# Build the database:
-# This will create the database file using SQLAlchemy
-DB.create_all()
+        # Register blueprint(s)
+        from .api import BLUEPRINT as API
+        APP.register_blueprint(API)
 
-# Persist All roles in database
-_ROLES = RoleService(APP).create_all()
+        # Build the database:
+        # This will create the database file using SQLAlchemy
+        DB.create_all()
 
-# Create cost for each role
-CostService.create_all(_ROLES)
+        # Persist All roles in database
+        roles = RoleService(APP).create_all()
 
-# pylint: enable=wrong-import-position
+        # Create cost for each role
+        CostService.create_all(roles)
+
+    return APP

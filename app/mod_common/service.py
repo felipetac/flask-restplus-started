@@ -37,8 +37,7 @@ class BaseService():
                 .order_by(orderby_and_sort()) \
                 .paginate(page, per_page, error_out=False).items
             if entities:
-                entity_schema = cls.Meta.schema(
-                    many=True)  # pylint: disable=not-callable
+                entity_schema = cls.Meta.schema(many=True)
                 data = entity_schema.dump(entities)
                 if data:
                     count = DB.session.query(order_by).count()
@@ -60,7 +59,7 @@ class BaseService():
             entity = cls.Meta.model.query.filter_by(id=entity_id).first()
             if entity:
                 if serialize:
-                    entity_schema = cls.Meta.schema()  # pylint: disable=not-callable
+                    entity_schema = cls.Meta.schema()
                     return entity_schema.dump(entity)
                 return entity
         return None

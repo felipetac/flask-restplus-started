@@ -7,6 +7,10 @@ verify_ssl = true
 pylint = "*"
 python-dotenv = "*"
 autopep8 = "*"
+pytest = "*"
+coverage = "*"
+pytest-cov = "*"
+pytest-flask = "*"
 
 [packages]
 flask-restplus = "*"
