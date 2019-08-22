@@ -26,9 +26,10 @@ wtforms-alchemy = "*"
 wtforms-json = "*"
 passlib = "*"
 pyjwt = "*"
+flask-cors = "*"
 
 [requires]
-python_version = "3.7"
+python_version = "3.6"
 
 [pipenv]
 allow_prereleases = true

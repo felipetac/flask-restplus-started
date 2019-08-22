@@ -1,4 +1,8 @@
 {
     "python.pythonPath": ".venv/bin/python",
-    "python.linting.enabled": true
+    "python.linting.enabled": true,
+    "files.exclude": {
+        "**/__pycache__": true,
+        "**/.git": true
+    }
 }

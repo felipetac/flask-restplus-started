@@ -6,12 +6,16 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from flask_babel import Babel
 from config import CONFIG
+from flask_cors import CORS
 
 # Define the WSGI application object
 APP = Flask(__name__)
 
+# CORS Simple Usage
+CORS = CORS(APP) # TOdO: Implementar CORS Dinâmico?
+
 # Configurations
-__ENV = os.environ["APP_SETTINGS"] if "APP_SETTINGS" in os.environ.keys(
+__ENV = os.environ["FLASK_ENV"] if "FLASK_ENV" in os.environ.keys(
 ) else "default"
 APP.config.from_object(CONFIG.get(__ENV))
 

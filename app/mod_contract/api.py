@@ -3,6 +3,7 @@ from app.mod_role.service import Service as ROLE
 from app.mod_audit.service import Service as AUDIT
 from app.mod_auth.service import Service as AUTH
 from app.mod_auth.api import AUTHORIZATIONS
+from app.mod_common.util import Util
 from .service import Service as CONTRACT
 
 API = Namespace('contract', description='Operações do Contrato',
@@ -20,7 +21,10 @@ _CONTRACT = API.model('Contract', {
                                            description='Lista de ids dos usuários')),
     'roles_id': fields.List(fields.Integer(required=False,
                                            description='Lista de ids das regras')),
-    'expire_at': fields.DateTime(required=False, description="Data fim do contrato")
+    'expire_at': fields.DateTime(required=False, description="Data fim do contrato",
+                                 example=Util.datetime_delta(864000)),
+    'key_exp': fields.Integer(required=True,
+                              description='Tempo de expiração da Chave de Acesso (em segundos)')
 })
 
 

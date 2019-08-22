@@ -8,9 +8,9 @@ class UniqueRolePerCNPJ(Uq):
         columns = self._syntaxes_as_tuples(form, field, self.column)
         self.model = columns[0][1].class_  # pylint: disable=attribute-defined-outside-init
         roles_ids = form.roles_id.data
-        cur_cnpj = form.company_cnpj.data
+        owner_id = form.owner_id.data
         contracts = self.query.filter(
-            self.model.company_cnpj == cur_cnpj).all()
+            self.model.owner_id == owner_id).all()
         cnpj_roles_lsts = [[r.id for r in c.roles] for c in contracts]
         roles_joined = []
         for lst in cnpj_roles_lsts:

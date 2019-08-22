@@ -8,16 +8,11 @@ from .service import Service as OWNER
 API = Namespace('owner', description='Operações do Dono',
                 authorizations=AUTHORIZATIONS)
 
-_USER = API.model('Owner', {
+_OWNER = API.model('Owner', {
     'name': fields.String(required=True, description='Nome do dono',
                           example="Felipe Toscano"),
-    'email': fields.String(required=True, description='E-mail do dono',
-                           example="felipe.toscano@gmail.com"),
-    'password': fields.String(required=True, description='Senha do dono', example="123456"),
-    'active': fields.Boolean(required=True, description='Usuario Ativo',
-                             example=True),
-    'roles_excluded_id': fields.List(fields.Integer(required=False,
-                                                    description='Lista de ids das regras'))
+    'cpf_cnpj': fields.String(required=True, description='CPF ou CNPJ do dono',
+                              example="01218493178")
 })
 
 
@@ -27,10 +22,10 @@ class Owner(Resource):
     '''Cria um novo dono'''
     @API.doc('create_owner')
     # @API.doc(security='jwt')
-    @API.expect(_USER)
-    @API.response(201, 'Dono criado', _USER)
+    @API.expect(_OWNER)
+    @API.response(201, 'Dono criado', _OWNER)
     @API.response(400, 'Formulário inválido')
-    # @API.marshal_with(_USER, code=201)
+    # @API.marshal_with(_OWNER, code=201)
     # @AUTH.required
     @AUDIT.register
     def post(self):
@@ -50,8 +45,8 @@ class OwnerItem(Resource):
     '''Exibe um dono e permite a manipulação do mesmo'''
     @API.doc('get_owner')
     @API.doc(security='jwt')
-    # @API.marshal_with(_USER)
-    @API.response(200, 'Dono apresentado', _USER)
+    # @API.marshal_with(_OWNER)
+    @API.response(200, 'Dono apresentado', _OWNER)
     @AUTH.required
     @AUDIT.register
     def get(self, _id):
@@ -77,9 +72,9 @@ class OwnerItem(Resource):
 
     @API.doc('update_owner')
     @API.doc(security='jwt')
-    @API.expect(_USER)
-    @API.response(200, 'Dono atualizado', _USER)
-    # @API.marshal_with(_USER, code=200)
+    @API.expect(_OWNER)
+    @API.response(200, 'Dono atualizado', _OWNER)
+    # @API.marshal_with(_OWNER, code=200)
     @AUTH.required
     @AUDIT.register
     def put(self, _id):
@@ -106,7 +101,7 @@ class OwnerPaginate(Resource):
     '''Lista os donos com paginação'''
     @API.doc('list_owners')
     @API.doc(security='jwt')
-    # @API.marshal_list_with(_USER)
+    # @API.marshal_list_with(_OWNER)
     @AUTH.required
     @AUDIT.register
     @OWNER.marshal_paginate

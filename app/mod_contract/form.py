@@ -2,11 +2,10 @@ import random
 from wtforms.validators import Optional, NumberRange
 from wtforms.fields import SelectField, SelectMultipleField
 from app.mod_common.form import RestForm
-from app.mod_common.validator import CNPJ
 from app.mod_user.service import Service as UserService
 from app.mod_role.service import Service as RoleService
 from app.mod_owner.service import Service as OwnerService
-from .model import Model
+from .model import Model, ContractRole
 from .validator import UniqueRolePerCNPJ
 
 
@@ -14,8 +13,7 @@ class Form(RestForm):
 
     class Meta:
         model = Model
-        field_args = {'company_cnpj': {'validators': [CNPJ]},
-                      'bill_day': {'validators': [NumberRange(min=1, max=30)]}}
+        field_args = {'bill_day': {'validators': [NumberRange(min=1, max=30)]}}
 
     owner_id = SelectField(
         'Owner Id', coerce=int,
@@ -30,6 +28,10 @@ class Form(RestForm):
         choices=RoleService.get_choices("id", "name"))
 
     def populate_obj(self, entity):
+        if self.name.data:
+            entity.name = self.name.data
+        if self.expire_at.data:
+            entity.expire_at = self.expire_at.data
         if not entity.issuer:
             entity.issuer = self._create_issuer_name()
         if self.owner_id.data:
@@ -45,8 +47,10 @@ class Form(RestForm):
             for role_id in self.roles_id.data:
                 if role_id not in [role.id for role in entity.roles]:
                     role = RoleService.read(role_id, serialize=False)
-                    entity.roles.append(role)
-        super().populate_obj(entity)
+                    #entity.roles.append(role)
+                    association = ContractRole()
+                    association.role = role
+                    entity.roles.append(association)
 
     @classmethod
     def _create_issuer_name(cls):

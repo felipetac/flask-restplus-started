@@ -18,7 +18,7 @@ class Unique(Uq):
         Uq.__init__(self, column, get_session=get_session, message=message)
 
 
-class _Validator(ABC):  # Python Abstract Class
+class Validator(ABC):  # Python Abstract Class
 
     def __init__(self, message=None):
         self.message = message if message else "ABC Inválido."
@@ -32,11 +32,11 @@ class _Validator(ABC):  # Python Abstract Class
         pass
 
 
-class CNPJ(_Validator):
+class CNPJ(Validator):
 
     def __init__(self, message=None):
         message = message if message else "CNPJ Inválido."
-        super().__init__(self, message)
+        super().__init__(message)
 
     @staticmethod
     def validate(text):
@@ -58,11 +58,11 @@ class CNPJ(_Validator):
         return False
 
 
-class CPF(_Validator):
+class CPF(Validator):
 
     def __init__(self, message=None):
         message = message if message else "CPF Inválido."
-        super().__init__(self, message)
+        super().__init__(message)
 
     @staticmethod
     def validate(text):
@@ -82,11 +82,11 @@ class CPF(_Validator):
         return False
 
 
-class CPFCNPJ(_Validator):
+class CPFCNPJ(Validator):
 
     def __init__(self, message=None):
         message = message if message else "CPF ou CNPJ Inválido."
-        super().__init__(self, message)
+        super().__init__(message)
 
     @staticmethod
     def validate(text):

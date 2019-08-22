@@ -8,6 +8,7 @@ from app.mod_owner.api import API as OwnerNS
 from app.mod_contract.api import API as ContractNS
 from app.mod_cost.api import API as CostNS
 from app.mod_billing.api import API as BillingNS
+from app.mod_context.api import API as ContextNS
 
 BLUEPRINT = Blueprint('user_api', __name__, url_prefix='/api/1')
 
@@ -25,3 +26,4 @@ API.add_namespace(OwnerNS)
 API.add_namespace(ContractNS)
 API.add_namespace(CostNS)
 API.add_namespace(BillingNS)
+API.add_namespace(ContextNS)

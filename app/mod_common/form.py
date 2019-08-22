@@ -31,7 +31,7 @@ class RestForm(_BMF):
         # Fix -----------------------
         form_temp = formdata.copy()
         for key in form_temp.keys():
-            if formdata[key] == [0]:
+            if not formdata[key] or formdata[key] == [0]:
                 del formdata[key]
         # ---------------------------
 

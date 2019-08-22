@@ -18,7 +18,7 @@ class BaseService():
         sort = "desc"
 
     @classmethod
-    def list(cls, page=None, per_page=None, order_by=None, sort=None):
+    def list(cls, page=None, per_page=None, order_by=None, sort=None, serialize=True):
         cls._validate_instances(["model", "form", "schema"])
         obj = {}
         for attr in ["page", "per_page", "order_by", "sort"]:
@@ -37,18 +37,20 @@ class BaseService():
                 .order_by(orderby_and_sort()) \
                 .paginate(page, per_page, error_out=False).items
             if entities:
-                entity_schema = cls.Meta.schema(many=True)
-                data = entity_schema.dump(entities)
-                if data:
-                    count = DB.session.query(order_by).count()
-                    prev = (page - 1) if page > 1 else None
-                    last_p = math.ceil(count / per_page)
-                    nxt = (page + 1) if page < last_p else None
-                    last_p = last_p if last_p > 0 else 1
-                    page = {"curr": page, "prev": prev,
-                            "next": nxt, "last": last_p}
-                    return {"data": data, "page": page}
-                return data
+                if serialize:
+                    entity_schema = cls.Meta.schema(many=True)
+                    data = entity_schema.dump(entities)
+                    if data:
+                        count = DB.session.query(order_by).count()
+                        prev = (page - 1) if page > 1 else None
+                        last_p = math.ceil(count / per_page)
+                        nxt = (page + 1) if page < last_p else None
+                        last_p = last_p if last_p > 0 else 1
+                        page = {"curr": page, "prev": prev,
+                                "next": nxt, "last": last_p}
+                        return {"data": data, "page": page}
+                    return data
+                return entities
             return []
         return {"form": form.errors}
 

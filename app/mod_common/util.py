@@ -1,3 +1,4 @@
+import datetime
 from app import DB
 
 
@@ -18,3 +19,9 @@ class Util(object):
     @staticmethod
     def model_exists(model_class):
         return model_class.metadata.tables[model_class.__tablename__].exists(DB.engine)
+
+    @staticmethod
+    def datetime_delta(delta_sec):
+        if delta_sec and isinstance(delta_sec, int):
+            return str(datetime.datetime.utcnow() + datetime.timedelta(seconds=delta_sec))
+        return None

@@ -7,4 +7,4 @@ class Form(RestForm):
 
     class Meta:
         model = Model
-        field_args = {'cpf_cnpj': {'validators': [CPFCNPJ]}}
+        field_args = {'cpf_cnpj': {'validators': [CPFCNPJ()]}}
