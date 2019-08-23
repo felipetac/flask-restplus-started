@@ -20,3 +20,14 @@ class Service(BaseService):
                     return {"data": user_schema.dump(user)}
                 return user
         return None
+
+    @classmethod
+    def get_by_cpfcnpj(cls, cpf_cnpj, serialize=True):
+        if cpf_cnpj and isinstance(cpf_cnpj, str):
+            user = Model.query.filter_by(cpf_cnpj=cpf_cnpj).first()
+            if user:
+                if serialize:
+                    user_schema = Schema()
+                    return {"data": user_schema.dump(user)}
+                return user
+        return None

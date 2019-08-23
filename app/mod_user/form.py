@@ -2,6 +2,7 @@ from wtforms.validators import Optional
 from wtforms.fields import SelectMultipleField
 from app.mod_common.sanitizer import to_lower
 from app.mod_common.form import RestForm
+from app.mod_common.validator import CPFCNPJ
 from app.mod_role.service import Service as RoleService
 from .model import Model
 
@@ -10,16 +11,18 @@ class Form(RestForm):
 
     class Meta:
         model = Model
-        field_args = {'email': {'filters': [to_lower]}}
+        field_args = {'email': {'filters': [to_lower]},
+                      'cpf_cnpj': {'validators': [CPFCNPJ()]}}
 
-    roles_excluded_id = SelectMultipleField(
+    roles_excluded = SelectMultipleField(
         'Roles Excluded Ids',
         validators=[Optional()], choices=RoleService.get_choices("id", "name"), coerce=int)
 
     def populate_obj(self, entity):
         if self.roles_excluded_id.data:
+            roles_excluded = []
             for role_id in self.roles_excluded_id.data:
-                if role_id not in [role.id for role in entity.roles]:
-                    role = RoleService.read(role_id, serialize=False)
-                    entity.roles.append(role)
+                role = RoleService.read(role_id, serialize=False)
+                roles_excluded.append(role)
+            entity.roles_excluded = list(set(roles_excluded))
         super().populate_obj(entity)

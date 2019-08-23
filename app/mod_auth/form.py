@@ -11,10 +11,10 @@ class LoginForm(RestForm):
     password = PasswordField('Password',
                              [Required(message='Senha é requerida.'),
                               Length(min=6, max=12), Password()])
-    issuer = TextField('Contract Issuer',
-                       [Required(message='Código do emissor é requerido.'), Issuer()])
+    issuer = TextField('Account Code',
+                       [Required(message='Código do emissor do token é requerido.'), Issuer()])
 
 
 class KeyForm(RestForm):
-    key = TextField('JWT Key', [Required(message='A chave JWT é requerida.'), Key()])
-    issuer = TextField('Contract Issuer', [Optional(), Issuer()])
+    key = TextField('JWT Key', [Required(message='A token é requerido.'), Key()])
+    issuer = TextField('Account Code', [Optional(), Issuer()])

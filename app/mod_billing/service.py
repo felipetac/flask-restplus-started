@@ -3,7 +3,6 @@ from flask import request
 from app.mod_common.service import BaseService
 from app.mod_auth.service import Service as AuthService
 from app.mod_role.service import Service as RoleService
-from app.mod_cost.service import Service as CostService
 from .model import Model, Schema
 from .form import Form
 
@@ -29,18 +28,14 @@ class Service(BaseService):
                 key, module_name,
                 class_name, method_name)
             if ret and not isinstance(ret, str):
-                cost = None
-                contract, user = ret
+                account, user = ret
                 role = RoleService.read_by_attrs(
                     module_name, class_name,
                     method_name)
                 if role:
-                    cost = CostService.read_by_role(role.id)
-                if cost:
                     obj = {"base_url": base_url,
-                           "contract_id": contract.id,
-                           "user_id": user.id,
-                           "cost_id": cost.id}
+                           "account_id": account.id,
+                           "user_id": user.id}
                     cls.create(obj, serialize=False)
                 return function(*args, **kwargs)
         return wrapper

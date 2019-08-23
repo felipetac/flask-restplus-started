@@ -2,8 +2,7 @@ import jwt
 from flask import request, current_app
 from wtforms.validators import ValidationError
 from app.mod_user.service import Service as UserService
-from app.mod_context.service import Service as ContextService
-from app.mod_contract.service import Service as ContractService
+from app.mod_account.service import Service as AccountService
 
 
 class Key(object):
@@ -57,26 +56,11 @@ class Issuer(object):
                                   current_app.config["JWT_ALGORITHM"])
             if payloads:
                 user = UserService.get_by_email(payloads["email"], serialize=False)
-        if issuer and issuer.find("contrato") < 0 and issuer.find("app") < 0:
-            raise ValidationError("Emissor inválido.")
-        if issuer and issuer.find("contrato") != -1:
-            contract = ContractService.read_by_issuer(issuer)
-            if not contract:
-                raise ValidationError("Contrato inválido.")
-            if not contract.is_active:
-                raise ValidationError("Contrato expirado.")
-            if not user or issuer not in [c.issuer for c in user.contracts]:
-                raise ValidationError("Contrato sem associação com o usuário.")
-        if issuer and issuer.find("app") != -1:
-            context = ContextService.read_by_issuer(issuer)
-            if not context:
-                raise ValidationError("Contexto inválido.")
-            contracts_id = [c.contract.id for c in context.contexts if c.contract.is_active]
-            if not contracts_id:
-                raise ValidationError("Contexto não possui contratos ativos.")
-            if user:
-                user_contracts_ids = [c.id for c in user.contracts if c.is_active]
-                if not [c for c in user_contracts_ids if c in contracts_id]:
-                    raise ValidationError("Contexto sem associação com o usuário.")
-            else:
-                raise ValidationError("Contexto sem associação com o usuário.")
+        if issuer:
+            account = AccountService.read_by_code(issuer, serialize=False)
+            if not account:
+                raise ValidationError("Emissor do token inválido.")
+            if account and not account.is_active:
+                raise ValidationError("Emissor do token expirado.")
+            if not user or issuer not in [c.code_name for c in user.accounts]:
+                raise ValidationError("Emissor do token sem associação com o usuário.")

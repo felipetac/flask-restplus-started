@@ -23,5 +23,6 @@ class Util(object):
     @staticmethod
     def datetime_delta(delta_sec):
         if delta_sec and isinstance(delta_sec, int):
-            return str(datetime.datetime.utcnow() + datetime.timedelta(seconds=delta_sec))
+            return (datetime.datetime.utcnow() + datetime.timedelta(
+                seconds=delta_sec)).strftime("%d/%m/%Y %H:%M:%S")
         return None

@@ -1,6 +1,6 @@
 
 from flask_restplus import Namespace, Resource, fields
-#from app.mod_audit.service import Service as AUDIT
+from app.mod_audit.service import Service as AUDIT
 from app.mod_role.service import Service as ROLE
 from .service import Service
 
@@ -33,11 +33,12 @@ _KEY = API.model('Key', {
 @ROLE.register
 @API.route('/get-key')
 @API.expect(_USER)
-@API.response(201, 'Chave  de acesso disponibilizada', _KEY)
+@API.response(201, 'Chave de acesso disponibilizada', _KEY)
 @API.response(400, 'Formulário inválido')
 class Key(Resource):
     '''Obter a chave de acesso'''
     @API.doc('get_key')
+    @AUDIT.register
     def post(self):
         '''Obter a chave de acesso'''
         res = Service.get_key(API.payload)
@@ -50,8 +51,8 @@ class Key(Resource):
 @ROLE.register
 @API.route('/refresh-key')
 @API.expect(_KEY)
-@API.response(201, 'Chave  de acesso disponibilizada', _KEY)
-class KeyValidate(Resource):
+@API.response(201, 'Chave de acesso disponibilizada', _KEY)
+class KeyRefresh(Resource):
     '''Atualiza chave de acesso'''
     @API.doc('refresh_key')
     def post(self):

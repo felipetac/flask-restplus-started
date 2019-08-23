@@ -80,7 +80,8 @@ class BaseService():
     @classmethod
     def create(cls, json_obj, serialize=True):
         cls._validate_instances(["model", "form", "schema"])
-        form = cls.Meta.form.from_json(json_obj)
+        form = cls.Meta.form()
+        form = form.from_json(json_obj)
         if form.validate():
             model = cls.Meta.model()
             form.populate_obj(model)
@@ -98,7 +99,8 @@ class BaseService():
         if entity_id and isinstance(entity_id, int):
             obj = cls.read(entity_id, serialize=False)
             if obj:
-                form = cls.Meta.form.from_json(json_obj, obj=obj)
+                form = cls.Meta.form()
+                form = form.from_json(json_obj, obj=obj)
                 if form.validate_on_submit():
                     form.populate_obj(obj)
                     DB.session.commit()

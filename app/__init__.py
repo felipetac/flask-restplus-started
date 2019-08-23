@@ -48,7 +48,6 @@ def create_app(env=None):
             APP.config.from_object(CONFIG.get(env))
 
         from app.mod_role.service import Service as RoleService
-        from app.mod_cost.service import Service as CostService
 
         # Register blueprint(s)
         from .api import BLUEPRINT as API
@@ -59,9 +58,6 @@ def create_app(env=None):
         DB.create_all()
 
         # Persist All roles in database
-        roles = RoleService(APP).create_all()
-
-        # Create cost for each role
-        CostService.create_all(roles)
+        RoleService(APP).create_all()
 
     return APP

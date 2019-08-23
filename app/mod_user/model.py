@@ -25,6 +25,7 @@ class Model(BaseModel):
 
     name = DB.Column(DB.String(200), nullable=False)
     email = DB.Column(EmailType, nullable=False, unique=True, index=True)
+    cpf_cnpj = DB.Column(DB.String(50), nullable=False, unique=True, index=True)
     password = DB.Column(PasswordType(onload=lambda **kwargs: dict(schemes=PS, **kwargs)),  # pylint: disable=unnecessary-lambda
                          nullable=False)
     roles_excluded = DB.relationship(Role, secondary=USER_ROLE_EXCLUDED,

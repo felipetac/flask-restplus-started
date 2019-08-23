@@ -17,6 +17,11 @@ class Service(BaseService):
     def register(cls, function):
         @wraps(function)
         def wrapper(*args, **kwargs):
+            retf = function(*args, **kwargs)
+
+            if isinstance(retf, list) and "key" in retf[0].keys():
+                print("KEYYYY ==> ", retf[0]["key"])
+
             obj = {}
             obj["module_name"] = args[0].__class__.__module__
             obj["class_name"] = args[0].__class__.__name__
@@ -27,5 +32,5 @@ class Service(BaseService):
                 _, user = ret
                 obj["user_id"] = user.id
             cls.create(obj)
-            return function(*args, **kwargs)
+            return retf
         return wrapper
