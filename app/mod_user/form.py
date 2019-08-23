@@ -14,7 +14,7 @@ class Form(RestForm):
         field_args = {'email': {'filters': [to_lower]},
                       'cpf_cnpj': {'validators': [CPFCNPJ()]}}
 
-    roles_excluded = SelectMultipleField(
+    roles_excluded_id = SelectMultipleField(
         'Roles Excluded Ids',
         validators=[Optional()], choices=RoleService.get_choices("id", "name"), coerce=int)
 
