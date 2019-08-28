@@ -1,9 +1,11 @@
+from copy import copy
 from flask_wtf import FlaskForm
 from wtforms_alchemy import model_form_factory
 import wtforms_json
 from werkzeug.datastructures import MultiDict
-from wtforms import IntegerField, SelectField
+from wtforms import IntegerField, SelectField, SelectMultipleField
 from wtforms.validators import Optional, NumberRange
+from wtforms.compat import text_type
 from app import DB, PP as PER_PAGE
 from .validator import Unique, Email
 
@@ -48,6 +50,9 @@ class RestForm(_BMF):
         )
         return form
 
+    def load_choices(self):
+        pass # função para ser reimplementada para carregar os choices dinâmicos
+
 
 class ListForm(RestForm):
 
@@ -59,3 +64,65 @@ class ListForm(RestForm):
                            default="id")
     sort = SelectField("Ordenar por", validators=[Optional()],
                        choices=[("asc", "asc"), ("desc", "desc")], default="desc")
+
+
+class SelectModelField(SelectField):
+    #pylint: disable=attribute-defined-outside-init
+
+    def __init__(self, model, label=None, validators=None, coerce=text_type, choices=None,
+                 **kwargs):
+        super().__init__(label, validators, **kwargs)
+        self.model = model
+        self.coerce = coerce
+        self.choices = copy(choices)
+
+    def process_formdata(self, valuelist):
+        if valuelist:
+            try:
+                prk = self.coerce(valuelist[0])
+                entity = self.model.query.filter_by(id=prk).first()
+                self.data = entity
+            except ValueError:
+                raise ValueError(self.gettext(
+                    'Invalid Choice: could not coerce'))
+
+    def pre_validate(self, form):
+        for value, _ in self.choices:
+            if self.data.id == value:
+                break
+        else:
+            raise ValueError(self.gettext('Not a valid choice'))
+
+    #pylint: enable=attribute-defined-outside-init
+
+
+class SelectMultipleModelField(SelectMultipleField):
+
+    def __init__(self, model, label=None, validators=None, coerce=text_type, choices=None,
+                 **kwargs):
+        super().__init__(label, validators, **kwargs)
+        self.model = model
+        self.coerce = coerce
+        self.choices = copy(choices)
+
+    def process_formdata(self, valuelist):
+        try:
+            model = self.model()
+            models = []
+            ids = list(self.coerce(x) for x in valuelist)
+            for idd in ids:
+                ret = model.query.filter_by(id=idd).first()
+                if ret:
+                    models.append(ret)
+            self.data = models  # pylint: disable=attribute-defined-outside-init
+        except ValueError:
+            raise ValueError(
+                self.gettext('Invalid choice(s): one or more data inputs could not be coerced'))
+
+    def pre_validate(self, form):
+        if self.data:
+            values = list(c[0] for c in self.choices)
+            for data in self.data:
+                if data.id not in values:
+                    raise ValueError(self.gettext(
+                        "'%(value)s' is not a valid choice for this field") % dict(value=data.id))

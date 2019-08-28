@@ -18,8 +18,8 @@ _USER = API.model('User', {
     'password': fields.String(required=True, description='Senha do usuário', example="123456"),
     'active': fields.Boolean(required=True, description='Usuario Ativo',
                              example=True),
-    'roles_excluded_id': fields.List(fields.Integer(required=False,
-                                                    description='Lista de ids das regras'))
+    'roles_excluded': fields.List(fields.Integer(required=False,
+                                                 description='Lista de ids das regras'))
 })
 
 
@@ -82,7 +82,7 @@ class UserItem(Resource):
     @API.expect(_USER)
     @API.response(200, 'Usuário atualizado', _USER)
     # @API.marshal_with(_USER, code=200)
-    #@AUTH.required
+    # @AUTH.required
     @AUDIT.register
     def put(self, _id):
         '''Atualiza um usuário dado seu identificador'''

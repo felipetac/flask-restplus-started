@@ -20,13 +20,13 @@ _USER = API.model('Login', {
     'password': fields.String(required=True, description='Senha do Usuário',
                               example="123456"),
     'issuer': fields.String(required=True, description='Código do Emissor',
-                            example="contrato-w4q56")
+                            example="conta-w4q56")
 })
 
 _KEY = API.model('Key', {
     'key': fields.String(required=True, description='Chave de acesso'),
     'issuer': fields.String(required=False, description='Código do Emissor',
-                            example="contrato-w4q56")
+                            example="conta-w4q56")
 })
 
 

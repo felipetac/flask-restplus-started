@@ -27,7 +27,7 @@ with APP.app_context():
 
 # Define the database object which is imported
 # by modules and controllers
-DB = SQLAlchemy(APP)
+DB = SQLAlchemy(APP, session_options={"autoflush": False})
 
 # Object serialization and deserialization, lightweight and fluffy
 MA = Marshmallow(APP)

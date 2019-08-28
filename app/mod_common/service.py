@@ -82,6 +82,7 @@ class BaseService():
         cls._validate_instances(["model", "form", "schema"])
         form = cls.Meta.form()
         form = form.from_json(json_obj)
+        form.load_choices() #lembrete: esta funcao sempre depois do from_json
         if form.validate():
             model = cls.Meta.model()
             form.populate_obj(model)
@@ -101,6 +102,7 @@ class BaseService():
             if obj:
                 form = cls.Meta.form()
                 form = form.from_json(json_obj, obj=obj)
+                form.load_choices() #lembrete: esta funcao sempre depois do from_json
                 if form.validate_on_submit():
                     form.populate_obj(obj)
                     DB.session.commit()

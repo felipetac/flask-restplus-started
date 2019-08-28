@@ -17,20 +17,19 @@ class Service(BaseService):
     def register(cls, function):
         @wraps(function)
         def wrapper(*args, **kwargs):
-            retf = function(*args, **kwargs)
-
-            if isinstance(retf, list) and "key" in retf[0].keys():
-                print("KEYYYY ==> ", retf[0]["key"])
-
             obj = {}
+            retf = function(*args, **kwargs)
+            key = request.headers.get('Authorization')
+            if isinstance(retf, list) and "key" in retf[0].keys():
+                key = retf[0]["key"]
             obj["module_name"] = args[0].__class__.__module__
             obj["class_name"] = args[0].__class__.__name__
             obj["method_name"] = function.__name__
             obj["base_url"] = request.base_url
-            ret = AuthService.is_member(request.headers.get('Authorization'))
+            ret = AuthService.is_member(key)
             if ret and not isinstance(ret, str):
                 _, user = ret
-                obj["user_id"] = user.id
+                obj["user"] = user.id
             cls.create(obj)
             return retf
         return wrapper

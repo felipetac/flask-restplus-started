@@ -12,15 +12,15 @@ API = Namespace('account', description='Operações da Conta',
 _ACCOUNT = API.model('Account', {
     'name': fields.String(required=True, description='Nome da conta',
                           example="Conta XPTO"),
-    'owner_id': fields.Integer(required=True, description='Id do Responsável da conta'),
+    'owner': fields.Integer(required=True, description='Id do Responsável da conta'),
     'is_active': fields.Boolean(required=True, description='Conta ativa?', example=True),
     'is_billed': fields.Boolean(required=True, description='Conta bilhetável?', example=True),
     'bill_day': fields.Integer(required=True, description='Dia de fechamento da fatura',
                                example=10),
-    'users_id': fields.List(fields.Integer(required=False,
-                                           description='Lista de ids dos usuários')),
-    'roles_id': fields.List(fields.Integer(required=False,
-                                           description='Lista de ids das regras')),
+    'users': fields.List(fields.Integer(required=False,
+                                        description='Lista de ids dos usuários')),
+    'roles': fields.List(fields.Integer(required=False,
+                                        description='Lista de ids das regras')),
     'expire_at': fields.DateTime(required=False, description="Data expiração da conta",
                                  example=Util.datetime_delta(864000)),
     'key_exp': fields.Integer(required=True,
@@ -114,7 +114,7 @@ class AccountPaginate(Resource):
     @API.doc('list_accounts')
     @API.doc(security='jwt')
     # @API.marshal_list_with(_ACCOUNT)
-    #@AUTH.required
+    # @AUTH.required
     @AUDIT.register
     @ACCOUNT.marshal_paginate
     def get(self, page=None, per_page=None, order_by=None, sort=None):
