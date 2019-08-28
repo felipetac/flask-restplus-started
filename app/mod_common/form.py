@@ -88,7 +88,7 @@ class SelectModelField(SelectField):
 
     def pre_validate(self, form):
         for value, _ in self.choices:
-            if self.data.id == value:
+            if self.data and self.data.id == value:
                 break
         else:
             raise ValueError(self.gettext('Not a valid choice'))

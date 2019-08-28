@@ -2,6 +2,7 @@
 from flask_restplus import Namespace, Resource, fields
 from app.mod_audit.service import Service as AUDIT
 from app.mod_role.service import Service as ROLE
+from app.mod_billing.service import Service as BILL
 from .service import Service
 
 AUTHORIZATIONS = {
@@ -55,6 +56,7 @@ class Key(Resource):
 class KeyRefresh(Resource):
     '''Atualiza chave de acesso'''
     @API.doc('refresh_key')
+    @BILL.register
     def post(self):
         '''Atualiza chave de acesso'''
         res = Service.refresh_key(API.payload)

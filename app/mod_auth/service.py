@@ -57,7 +57,7 @@ class Service:
     def is_member(cls, key):
         if key:
             result = KeyValidator.validate(key)
-            if not result:
+            if result:
                 payloads = result
                 user = UserService.get_by_email(
                     payloads["email"], serialize=False)
@@ -73,7 +73,7 @@ class Service:
                             return "Usuário não está associado ao contrato."
                         return (account, user)
                 return "Token Inválido!"
-            return result
+            return "Token Inválido"
         return "Token é requerido para esta requisição!"
 
     @classmethod

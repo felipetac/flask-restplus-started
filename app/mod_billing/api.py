@@ -1,5 +1,5 @@
 from flask_restplus import Namespace, Resource
-from app.mod_auth.service import Service as AUTH
+#from app.mod_auth.service import Service as AUTH
 from app.mod_auth.api import AUTHORIZATIONS
 from app.mod_audit.service import Service as AUDIT
 from app.mod_role.service import Service as ROLE
@@ -25,7 +25,7 @@ class BillPaginate(Resource):
     @API.doc('list_services')
     @API.doc(security='jwt')
     # @API.marshal_list_with(_ROLE)
-    @AUTH.required
+    #@AUTH.required
     @BILL.marshal_paginate
     @AUDIT.register
     def get(self, page=None, per_page=None, order_by=None, sort=None):

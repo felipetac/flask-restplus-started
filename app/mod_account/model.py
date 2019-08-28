@@ -30,18 +30,18 @@ ACCOUNT_USER = DB.Table(
               primary_key=True))'''
 
 
-class AccountRole(DB.Model):
+class AccountRole(BaseModel):
 
     __tablename__ = 'app_account_role'
 
-    date_created = DB.Column(
-        DB.DateTime, default=DB.func.current_timestamp(), index=True)
-    account_id = DB.Column(DB.Integer, DB.ForeignKey(
-        'app_account.id'), primary_key=True)
-    role_id = DB.Column(DB.Integer, DB.ForeignKey(
-        'app_role.id'), primary_key=True)
+    account_id = DB.Column(DB.Integer, DB.ForeignKey('app_account.id'))
+    account = DB.relationship("app.mod_account.model.Model")
+    role_id = DB.Column(DB.Integer, DB.ForeignKey('app_role.id'))
     role = DB.relationship(Role, backref=DB.backref('accounts'))
     cost = DB.Column(DB.Float, nullable=True, default=0.0)
+
+    __table_args__ = (DB.UniqueConstraint(
+        'account_id', 'role_id', name='uix_app_account_role'),)
 
 
 class Model(BaseModel):
@@ -68,6 +68,7 @@ class AccountRoleSchema(BaseSchema):
     class Meta:
         model = AccountRole
 
+    account = fields.Nested("app.mod_account.model.Schema", only=["id", "code_name"])
     role = fields.Nested(RoleSchema, only=["id", "name"])
 
 
